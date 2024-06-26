@@ -5,6 +5,8 @@ import { Toaster, toast } from 'sonner'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { useRouter } from "next/navigation"
+import LoginSpinner from "../Spinner/LoginSpinner"
 import { useState } from "react"
 import {
     InputOTP,
@@ -18,6 +20,8 @@ export function Login() {
     const [email,setEmail] = useState("");
     const [otp,setOtp] = useState("");
     const [isOtpsent,setIsOtpsent]=useState(false);
+    const [loading,setLoading] = useState(false);
+    const router = useRouter();
     const handleChange = (e)=>{
     if(e.target.name=="email"){
         setEmail(e.target.value);
@@ -26,27 +30,52 @@ export function Login() {
         setOtp(e.target.value); 
     }
 }
-const handleOtpSend = async()=>{
+const handleOtpSend = async(e)=>{
+  e.preventDefault();
   if(email==""){
     toast.error("Please enter your email");
     return
   }
-   let data = await axios.post("/api/auth",{email:email})
+  setLoading(true);
+   let data = await axios.post("/api/auth",{email:email,type:"send"})
+   setLoading(false)
     if(data.data.success){
         setIsOtpsent(true);
         toast.success(data.data.message)
+         
     }
     else{
       toast.error(data.data.message);
+       console.log(data)
     }
 }
-const hanldeVerifyOtp = ()=>{ 
+const hanldeVerifyOtp = async()=>{ 
+if(otp==""){
+  toast.error("Please enter otp");
+  return
+}
+setLoading(true);
+let data = await axios.post("/api/auth",{email:email,type:"verify",otp:otp})
+   setLoading(false)
+    if(data.data.success){
+        setIsOtpsent(true);
+        toast.success(data.data.message)
+        localStorage.setItem("dilmstoken",data.data.token);
+        router.push("/")
+    }
+    else{
+      toast.error(data.data.message);
+       console.log(data)
+    }
 
 }
 console.log(otp);
   return (
-    <div className="w-full lg:grid lg:min-h-[600px] lg:grid-cols-2 xl:min-h-[800px]">
-      <Toaster position="top-center"  expand={false}/>
+    <>
+     <Toaster position="top-center"  expand={false}/>
+    {loading?<div className="absolute flex justify-center items-center h-full w-full"><LoginSpinner/></div>:""}
+    <div className={`w-full lg:grid lg:min-h-[600px] lg:grid-cols-2 xl:min-h-[800px] ${loading?"opacity-30":""}`}>
+     
       <div className="flex items-center justify-center py-12">
         <div className="mx-auto grid w-[350px] gap-6">
           <div className="grid gap-2 text-center">
@@ -107,10 +136,10 @@ console.log(otp);
               <Input id="password" type="password" required />
             </div> */}
             {!isOtpsent&&<Button type="submit" className="w-full" variant="devsindia" onClick={handleOtpSend}>
-              Send Otp
+              {loading?"Sending...":"Send OTP"}
             </Button>}
-            {isOtpsent&&<Button type="submit" className="w-full" variant="devsindia">
-              Login
+            {isOtpsent&&<Button type="submit" className="w-full" variant="devsindia" onClick={hanldeVerifyOtp}>
+              {loading?"Verifying...":"Login"}
             </Button>}
             {/* <Button variant="outline" className="w-full">
               Login with Google
@@ -134,5 +163,6 @@ console.log(otp);
         />
       </div>
     </div>
+    </>
   )
 }
