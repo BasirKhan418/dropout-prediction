@@ -1,17 +1,67 @@
-/**
- * v0 by Vercel.
- * @see https://v0.dev/t/Q5bb2FyIagP
- * Documentation: https://v0.dev/docs#integrating-generated-code-into-your-nextjs-app
- */
+"use client"
 import Link from "next/link"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
-
+import { Toaster,toast } from "sonner"
+import { useEffect,useState } from "react"
+import axios from "axios"
+import { useRouter } from "next/navigation"
+import SessionDetected from "./Auth/SessionDetected"
+import Image from "next/image"
+import HomePageSkl from "./skeleton/HomePageSkl"
 export default function Home() {
+  const router = useRouter();
+const [data,setData] = useState(null);
+const [loading,setLoading] = useState(false);
+const [isansession,setisansession] = useState(false)
+const [assignment,setAssignment] = useState(3);
+const [project,setProject] = useState(3);
+//validating user with home auth
+const validatesFunc = async(token)=>{
+  console.log(token);
+  setLoading(true);
+ const response = await fetch("/api/homeauth",{
+  method:"POST",
+  headers:{
+    "content-type":"application/json",
+    "token":token
+  }
+ })
+const res = await response.json();
+  setLoading(false);
+console.log(res);
+if(res.success){
+setData(res.data);
+const totalAssignments = res.data.reduce((acc, item) => acc + item.assignMent.length, 3);
+      const totalProjects = res.data.reduce((acc, item) => acc + item.project.length, 3);
+
+      // Update state with the totals
+      setAssignment(totalAssignments);
+      setProject(totalProjects);
+}
+else{
+toast.error(res.message);
+if(res.ansession){
+  setisansession(true);
+  setTimeout(()=>{
+router.push("/login");
+  },4000)
+}
+router.push("/login");
+}
+}
+  useEffect(()=>{
+ validatesFunc(localStorage.getItem("dilmstoken"));
+  },[])
+  console.log(data)
   return (
-    <div className="flex flex-col w-full min-h-screen bg-background">
+    <>
+    <Toaster position="top-center" expand={false}/>
+    {loading&&<HomePageSkl/>}
+    {isansession&&<SessionDetected/>}
+    {!loading&&!isansession&&<div className="flex flex-col w-full min-h-screen bg-background">
       
       <main className="flex min-h-[calc(100vh_-_theme(spacing.16))] flex-1 flex-col gap-4 p-4 md:gap-8 md:p-10">
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -21,7 +71,7 @@ export default function Home() {
               <BookOpenIcon className="w-4 h-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">12</div>
+              <div className="text-2xl font-bold">{data&&data.length}</div>
               <p className="text-xs text-muted-foreground">Enrolled</p>
             </CardContent>
           </Card>
@@ -31,7 +81,7 @@ export default function Home() {
               <ClipboardIcon className="w-4 h-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">8</div>
+              <div className="text-2xl font-bold">{assignment}</div>
               <p className="text-xs text-muted-foreground">Pending</p>
             </CardContent>
           </Card>
@@ -41,7 +91,7 @@ export default function Home() {
               <BriefcaseIcon className="w-4 h-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">4</div>
+              <div className="text-2xl font-bold">{project}</div>
               <p className="text-xs text-muted-foreground">Ongoing</p>
             </CardContent>
           </Card>
@@ -51,7 +101,7 @@ export default function Home() {
               <TrophyIcon className="w-4 h-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">3</div>
+              <div className="text-2xl font-bold">{"99+"}</div>
               <p className="text-xs text-muted-foreground">Rank</p>
             </CardContent>
           </Card>
@@ -66,36 +116,19 @@ export default function Home() {
             </CardHeader>
             <CardContent>
               <div className="grid gap-4">
-                <div className="flex items-center justify-between">
+                {data&&data.map((item)=>(<div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <img src="/placeholder.svg" width="40" height="40" className="rounded-lg" alt="Course Thumbnail" />
+                    <Image src={item.Regdomain.img} width="40" height="40" className="rounded-lg" alt="Course Thumbnail" />
                     <div>
-                      <div className="font-medium">Introduction to Web Development</div>
-                      <div className="text-xs text-muted-foreground">Completed: 75%</div>
+                      <div className="font-medium">{item.Regdomain.title}</div>
+                      <div className="text-xs text-muted-foreground">Completed: 20%</div>
                     </div>
                   </div>
-                  <Progress value={75} className="w-20" />
-                </div>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <img src="/placeholder.svg" width="40" height="40" className="rounded-lg" alt="Course Thumbnail" />
-                    <div>
-                      <div className="font-medium">Data Structures and Algorithms</div>
-                      <div className="text-xs text-muted-foreground">Completed: 50%</div>
-                    </div>
-                  </div>
-                  <Progress value={50} className="w-20" />
-                </div>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <img src="/placeholder.svg" width="40" height="40" className="rounded-lg" alt="Course Thumbnail" />
-                    <div>
-                      <div className="font-medium">Machine Learning Fundamentals</div>
-                      <div className="text-xs text-muted-foreground">Completed: 30%</div>
-                    </div>
-                  </div>
-                  <Progress value={30} className="w-20" />
-                </div>
+                  <Progress value={20
+                  } className="w-20" />
+                </div>))}
+           
+            
               </div>
             </CardContent>
           </Card>
@@ -115,7 +148,7 @@ export default function Home() {
                     </div>
                     <div>
                       <div className="font-medium">Final Project Proposal</div>
-                      <div className="text-xs text-muted-foreground">Due: June 30, 2024</div>
+                      <div className="text-xs text-muted-foreground">Due: July 26, 2024</div>
                     </div>
                   </div>
                   <div className="text-xs text-muted-foreground">Pending</div>
@@ -127,10 +160,10 @@ export default function Home() {
                     </div>
                     <div>
                       <div className="font-medium">Midterm Exam</div>
-                      <div className="text-xs text-muted-foreground">Due: May 15, 2024</div>
+                      <div className="text-xs text-muted-foreground">Due: July 11, 2024</div>
                     </div>
                   </div>
-                  <div className="text-xs text-muted-foreground">Submitted</div>
+                  <div className="text-xs text-muted-foreground">Pending</div>
                 </div>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
@@ -139,10 +172,10 @@ export default function Home() {
                     </div>
                     <div>
                       <div className="font-medium">Weekly Quiz</div>
-                      <div className="text-xs text-muted-foreground">Due: April 30, 2024</div>
+                      <div className="text-xs text-muted-foreground">Due: To be Updated..</div>
                     </div>
                   </div>
-                  <div className="text-xs text-muted-foreground">Graded</div>
+                  <div className="text-xs text-muted-foreground">Pending</div>
                 </div>
               </div>
             </CardContent>
@@ -163,10 +196,10 @@ export default function Home() {
                     </div>
                     <div>
                       <div className="font-medium">Capstone Project</div>
-                      <div className="text-xs text-muted-foreground">Completed: 80%</div>
+                      <div className="text-xs text-muted-foreground">Completed: 0%</div>
                     </div>
                   </div>
-                  <Progress value={80} className="w-20" />
+                  <Progress value={1} className="w-20" />
                 </div>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
@@ -175,10 +208,10 @@ export default function Home() {
                     </div>
                     <div>
                       <div className="font-medium">Group Project</div>
-                      <div className="text-xs text-muted-foreground">Completed: 60%</div>
+                      <div className="text-xs text-muted-foreground">Completed: 0%</div>
                     </div>
                   </div>
-                  <Progress value={60} className="w-20" />
+                  <Progress value={1} className="w-20" />
                 </div>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
@@ -187,10 +220,10 @@ export default function Home() {
                     </div>
                     <div>
                       <div className="font-medium">Individual Project</div>
-                      <div className="text-xs text-muted-foreground">Completed: 40%</div>
+                      <div className="text-xs text-muted-foreground">Completed: 0%</div>
                     </div>
                   </div>
-                  <Progress value={40} className="w-20" />
+                  <Progress value={1} className="w-20" />
                 </div>
               </div>
             </CardContent>
@@ -211,36 +244,13 @@ export default function Home() {
                     <TrophyIcon className="w-5 h-5" />
                   </div>
                   <div>
-                    <div className="font-medium">John Doe</div>
+                    <div className="font-medium">{data&&data[0].name}</div>
                     <div className="text-xs text-muted-foreground">Overall Score: 92%</div>
                   </div>
                 </div>
-                <div className="text-xs text-muted-foreground">Rank: 1</div>
+                <div className="text-xs text-muted-foreground">Rank: 99+</div>
               </div>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <div className="rounded-lg bg-muted p-2 text-2xl">
-                    <TrophyIcon className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <div className="font-medium">Jane Smith</div>
-                    <div className="text-xs text-muted-foreground">Overall Score: 88%</div>
-                  </div>
-                </div>
-                <div className="text-xs text-muted-foreground">Rank: 2</div>
-              </div>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <div className="rounded-lg bg-muted p-2 text-2xl">
-                    <TrophyIcon className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <div className="font-medium">Michael Johnson</div>
-                    <div className="text-xs text-muted-foreground">Overall Score: 85%</div>
-                  </div>
-                </div>
-                <div className="text-xs text-muted-foreground">Rank: 3</div>
-              </div>
+           
             </div>
           </CardContent>
         </Card>
@@ -260,7 +270,7 @@ export default function Home() {
                 <div>
                   <div className="font-medium">New Course Announcement</div>
                   <div className="text-xs text-muted-foreground">
-                    A new course on Machine Learning has been added to the curriculum.
+                    A new course on Cloud Computing has been added to the curriculum.
                   </div>
                 </div>
               </div>
@@ -271,7 +281,7 @@ export default function Home() {
                 <div>
                   <div className="font-medium">Upcoming Deadline</div>
                   <div className="text-xs text-muted-foreground">
-                    The final project proposal is due on June 30, 2024.
+                    The final project proposal is due on July 26, 2024.
                   </div>
                 </div>
               </div>
@@ -279,13 +289,20 @@ export default function Home() {
                 <div className="rounded-lg bg-muted p-2 text-2xl">
                   <AwardIcon className="w-5 h-5" />
                 </div>
+                <div>
+                  <div className="font-medium">Project Evaluation</div>
+                  <div className="text-xs text-muted-foreground">
+                    The project evaluation is due on August 20th, 2024.
+                  </div>
+                </div>
                 <div />
               </div>
             </div>
           </CardContent>
         </Card>
       </main>
-    </div>
+    </div>}
+    </>
   )
 }
 
