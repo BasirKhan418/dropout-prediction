@@ -20,7 +20,8 @@ if(verify!=null){
     let verifym2 = await Auth.findOne({email:verify.email});
     if(verifym2.token === reqdata){
         let a = await InternUser.find({email:verify.email,status:"Registered"});
-        let data = await InternDetails.populate(a,{path:"Regdomain"});
+        let data = await InternDetails
+        .populate(a,{path:"Regdomain"});
         return NextResponse.json({message:"You are authorized to access this route",success:true,data:data});
     }
     else{

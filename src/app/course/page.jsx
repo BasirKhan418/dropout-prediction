@@ -11,7 +11,7 @@ const Page = () => {
     <>
    { loading?<HomePageSkl/>:<div className='flex justify-start items-center'>
     {data&&data.map((item)=>(
-        <Link href={`/course/${item.Regdomain._id}`} key={item._id}><Card title={item.Regdomain.title} description={item.Regdomain.desc} duration={item.Regdomain.duration} validity={"25/5/2025"} progress={20} img={item.Regdomain.img}/></Link>
+        <Link href={`/course/detail/${item.Regdomain._id}`} key={item._id}><Card title={item.Regdomain.title} description={item.Regdomain.desc} duration={item.Regdomain.duration} validity={"1"} progress={20} img={item.Regdomain.img} skills={item.Regdomain.skills}/></Link>
       ))}
       
     </div>}

@@ -20,7 +20,7 @@ console.log(pathname);
       <NextTopLoader 
       color="#FF0000"
       />
-        {pathname=="/login"?children:<Sidebar>{children}</Sidebar>}
+        {pathname=="/login"||pathname.startsWith("/course/detail")?children:<Sidebar>{children}</Sidebar>}
         </body>
     </html>
   );

@@ -8,7 +8,7 @@ import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { set } from "mongoose";
+import { Badge } from "@/components/ui/badge";
 import ProfilePageSkeleton from "@/utilities/skeleton/ProfilePageSkeleton";
 import { Toaster,toast } from "sonner";
 import ProfielSpinner from "@/utilities/Spinner/ProfielSpinner";
@@ -139,7 +139,7 @@ setPostLoading(false);
                 <div className="text-muted-foreground">Courses</div>
               </div>
               <div className="bg-muted rounded-lg p-4 flex flex-col items-center">
-                <div className="text-4xl font-bold">{score}%</div>
+                <div className="text-4xl font-bold">{Math.floor(score)}%</div>
                 <div className="text-muted-foreground">Total Score</div>
               </div>
             </div>
@@ -169,20 +169,30 @@ setPostLoading(false);
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {data&&data.map((item)=>(<Card className="p-4">
-                <div className="flex items-center justify-between">
-                    <div className="flex justify-center items-center flex-col">
+
+                <div className="flex items-center justify-between relative">
+               
+        <div className="absolute top-4 right-4">
+          <Badge variant="outline" className="bg-primary text-primary-foreground">
+            {item.Regdomain.duration} Months
+          </Badge>
+        </div>
+                    <div className="flex justify-center items-center flex-col ">
+                
                     <img src={item.Regdomain.img} alt="image" className="h-44 w-full object-cover"/>
                     <div className="text-lg font-bold">
                     {item.Regdomain.title}
                   </div>
                     </div>
                 </div>
-                <p className="text-muted-foreground">
-                  {item.Regdomain.desc.slice(0, 100) + "..."}
-                </p>
-                <Button variant="" className="my-2 w-full">
+                <div className="flex items-center justify-between mt-2 flex-wrap">
+          {item.Regdomain.skills.split(",").map((item,index)=>(<Badge variant="outline" className="bg-secondary text-secondary-foreground my-1" key={index}>
+            {item}
+          </Badge>))}
+          </div>
+                <Link href={`/course/detail/${item.Regdomain._id}`}><Button variant="" className="my-2 w-full">
                     View Now
-                </Button>
+                </Button></Link>
               </Card>))}
            
              
