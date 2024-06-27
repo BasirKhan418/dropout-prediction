@@ -2,33 +2,32 @@
 import { Progress } from "@/components/ui/progress"
 import { Button } from "@/components/ui/button"
 
-export default function Card() {
+export default function Card({title, description, progress, duration, validity,img}) {
   return (
     <div className="flex flex-col mx-8 h-screen bg-gray-50">
       <div className="max-w-sm w-full p-6 bg-card rounded-lg shadow-lg">
         <div className="flex flex-col gap-4">
-          <img src="https://devsindia.in/b.jpg" width={400} height={400} alt="Course Image" className="rounded-lg object-cover" />
+          <img src={img} width={400} height={400} alt="Course Image" className="rounded-lg object-cover" />
           <div className="space-y-2">
-            <h2 className="text-2xl font-bold">Introduction to React</h2>
+            <h2 className="text-2xl font-bold">{title}</h2>
             <p className="text-muted-foreground">
-              Learn the fundamentals of React, one of the most popular JavaScript libraries for building user
-              interfaces.
+            {description}
             </p>
           </div>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 ">
-              <Progress value={75} className="flex-1 w-40 " />
-              <span className="text-sm text-muted-foreground">75%</span>
+              <Progress value={progress} className="flex-1 w-40 " />
+              <span className="text-sm text-muted-foreground">{progress}%</span>
             </div>
             <div className="flex items-center gap-2">
               <CalendarIcon className="w-5 h-5 text-muted-foreground" />
-              <span className="text-sm text-muted-foreground">6 months</span>
+              <span className="text-sm text-muted-foreground">{duration} months</span>
             </div>
           </div>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <ClockIcon className="w-5 h-5 text-muted-foreground" />
-              <span className="text-sm text-muted-foreground">Valid until 12/31/2024</span>
+              <span className="text-sm text-muted-foreground">Valid until{validity}</span>
             </div>
             <Button className="w-full">View Course</Button>
           </div>

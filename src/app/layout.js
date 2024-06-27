@@ -3,7 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { Sidebar } from "@/utilities/Sidebar";
 import { usePathname } from "next/navigation";
-
+import NextTopLoader from 'nextjs-toploader';
 const inter = Inter({ subsets: ["latin"] });
 
  const metadata = {
@@ -17,6 +17,9 @@ console.log(pathname);
   return (
     <html lang="en">
       <body className={inter.className}>
+      <NextTopLoader 
+      color="#FF0000"
+      />
         {pathname=="/login"?children:<Sidebar>{children}</Sidebar>}
         </body>
     </html>

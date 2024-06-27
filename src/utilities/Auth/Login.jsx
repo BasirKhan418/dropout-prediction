@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useRouter } from "next/navigation"
-import LoginSpinner from "../Spinner/LoginSpinner"
+import ProfielSpinner from "../Spinner/ProfielSpinner"
 import { useState } from "react"
 import {
     InputOTP,
@@ -73,7 +73,7 @@ console.log(otp);
   return (
     <>
      <Toaster position="top-center"  expand={false}/>
-    {loading?<div className="absolute flex justify-center items-center h-full w-full"><LoginSpinner/></div>:""}
+    {loading?<div className="absolute flex justify-center items-center h-full w-full"><ProfielSpinner/></div>:""}
     <div className={`w-full lg:grid lg:min-h-[600px] lg:grid-cols-2 xl:min-h-[800px] ${loading?"opacity-30":""}`}>
      
       <div className="flex items-center justify-center py-12">

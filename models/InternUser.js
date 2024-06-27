@@ -23,6 +23,8 @@ const InternUserSchema = new mongoose.Schema({
     ccurl: { type: String },
     startdate: { type: String },
     enddate: { type: String },
+    progress:{type:Number,default:0},
+    rank: { type: String },
     teststatus: { type: String, default: 'pending' },
     question1answer: [{ type: Object, default: '' }],
     question2answer: [{ type: Object, default: '' }],

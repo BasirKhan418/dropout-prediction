@@ -1,9 +1,11 @@
+"use client"
 import Link from "next/link"
 import Image from "next/image"
 import { PiBooksDuotone } from "react-icons/pi";
 import { BiTask } from "react-icons/bi";
 import { GrProjects } from "react-icons/gr";
 import { GiArtificialIntelligence } from "react-icons/gi";
+import { usePathname } from "next/navigation";
 import {
   Bell,
   CircleUser,
@@ -36,8 +38,11 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Input } from "@/components/ui/input"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-
+import Logout from "./dialog/Logout";
+import { useState } from "react";
 export function Sidebar({children}) {
+  const pathname = usePathname();
+  const [isOpen, setIsOpen] = useState(false);
   return (
     <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
       <div className="hidden border-r bg-muted/40 md:block">
@@ -62,15 +67,15 @@ export function Sidebar({children}) {
           <div className="flex-1">
             <nav className="grid items-start px-2 text-sm font-medium lg:px-4">
               <Link
-                href="#"
-                className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
+                href="/"
+                className={`flex items-center gap-3 rounded-lg ${pathname=="/"?"bg-muted text-primary":" text-muted-foreground"} px-3 py-2  transition-all hover:text-primary`}
               >
                 <Home className="h-4 w-4" />
                 Dashboard
               </Link>
               <Link
                 href="/course"
-                className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
+                className={`flex items-center gap-3 rounded-lg ${pathname=="/course"?"bg-muted text-primary":"text-muted-foreground "} px-3 py-2  transition-all hover:text-primary`}
               >
              < PiBooksDuotone className="h-5 w-5"/>
 
@@ -80,22 +85,22 @@ export function Sidebar({children}) {
                 </Badge>
               </Link>
               <Link
-                href="#"
-                className="flex items-center gap-3 rounded-lg bg-muted px-3 py-2 text-primary transition-all hover:text-primary"
+                href="/assignment"
+                className={`flex items-center gap-3 rounded-lg ${pathname=="/assignment"?"bg-muted text-primary":" text-muted-foreground"} px-3 py-2  transition-all hover:text-primary`}
               >
                 <BiTask className="h-5 w-5" />
                 Assignments{" "}
               </Link>
               <Link
-                href="#"
-                className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
+                href="project"
+                className={`flex items-center gap-3 rounded-lg ${pathname=="project"?"bg-muted text-primary":" text-muted-foreground"} px-3 py-2  transition-all hover:text-primary`}
               >
                 <GrProjects  className="h-4 w-4" />
                 Projects
               </Link>
               <Link
-                href="#"
-                className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
+                href="/diai"
+                className={`flex items-center gap-3 rounded-lg ${pathname=="/diai"?"bg-muted text-primary":" text-muted-foreground"} px-3 py-2  transition-all hover:text-primary`}
               >
                 <GiArtificialIntelligence className="h-5 w-5" />
                 Ai assistant
@@ -112,8 +117,11 @@ export function Sidebar({children}) {
       </CardHeader>
       <CardContent className="p-2 pt-0 md:p-4 md:pt-0">
         <Button size="sm" className="w-full mb-2">
+          <Link href="https://devsindia.in/student">
           Browse Courses
+          </Link>
         </Button>
+
         {/* <Button size="sm" className="w-full">
           Upgrade to Premium
         </Button> */}
@@ -219,13 +227,16 @@ export function Sidebar({children}) {
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>My Account</DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>Settings</DropdownMenuItem>
+              <Link href={"/profile"}><DropdownMenuItem>Profile</DropdownMenuItem></Link>
               <DropdownMenuItem>Support</DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>Logout</DropdownMenuItem>
+              <DropdownMenuItem onClick={()=>{
+                setIsOpen(true)
+              }}>Logout</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </header>
+        <Logout isOpen={isOpen} setIsOpen={setIsOpen}/>
        {children}
       </div>
     </div>
