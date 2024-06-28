@@ -203,42 +203,48 @@ setPostLoading(false);
               <h2 className="text-2xl font-bold">Settings</h2>
             </div>
             <Card className="p-4">
-            <form onSubmit={onSubmitdata}>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-               
-                <div className="space-y-2">
-                  <Label htmlFor="name">Name</Label>
-                  <Input id="name" type="text" name="name" value={form.name} onChange={handleChange} />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    name="email"
-                    value={form.email}
-                    onChange={handleChange}
-                    readOnly
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="password">Profile</Label>
-                  <Input id="profile" type="url" name="profile" value={form.profile} onChange={handleChange} />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="password">Phone</Label>
-                  <Input id="phone" type="number" name={"phone"} value={form.phone} onChange={handleChange} />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="role">Description</Label>
-                 <textarea name="desc" id="" rows={8} cols={65} value={form.desc} onChange={handleChange} className="border-2 border-green-200 rounded-lg p-2"  ></textarea>
-                </div>
-               
-              </div>
-              <div className="mt-4 flex justify-end">
-                <Button type="submit">Save Changes</Button>
-              </div>
-              </form>
+            <form onSubmit={onSubmitdata} className="space-y-4">
+  <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+    <div className="space-y-2">
+      <Label htmlFor="name">Name</Label>
+      <Input id="name" type="text" name="name" value={form.name} onChange={handleChange} />
+    </div>
+    <div className="space-y-2">
+      <Label htmlFor="email">Email</Label>
+      <Input
+        id="email"
+        type="email"
+        name="email"
+        value={form.email}
+        onChange={handleChange}
+        readOnly
+      />
+    </div>
+    <div className="space-y-2">
+      <Label htmlFor="profile">Profile</Label>
+      <Input id="profile" type="url" name="profile" value={form.profile} onChange={handleChange} />
+    </div>
+    <div className="space-y-2">
+      <Label htmlFor="phone">Phone</Label>
+      <Input id="phone" type="number" name="phone" value={form.phone} onChange={handleChange} />
+    </div>
+    <div className="space-y-2 md:col-span-2">
+      <Label htmlFor="desc">Description</Label>
+      <textarea 
+        name="desc" 
+        id="desc" 
+        rows={8} 
+        value={form.desc} 
+        onChange={handleChange} 
+        className="w-full border-2 border-green-200 rounded-lg p-2 resize-none"  
+      ></textarea>
+    </div>
+  </div>
+  <div className="mt-4 flex justify-end">
+    <Button type="submit">Save Changes</Button>
+  </div>
+</form>
+
             </Card>
           </div>
         </div>

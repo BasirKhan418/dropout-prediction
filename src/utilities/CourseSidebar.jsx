@@ -9,10 +9,14 @@ import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/
 import { AiOutlineMenuFold } from "react-icons/ai";
 import { AiOutlineMenuUnfold } from "react-icons/ai";
 import { IoMdArrowRoundBack } from "react-icons/io";
+import { IoVideocamOutline } from "react-icons/io5";
+import { MdOutlineAssignmentTurnedIn } from "react-icons/md";
+import { FaFolder } from "react-icons/fa";
 export default function CourseSidebar() {
   const [activeFolder, setActiveFolder] = useState("overview")
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isopen,setIsopen] = useState(true);
+ 
   return (
     <div className=" h-[100vh] w-full flex-col">
          <header className="bg-white dark:bg-gray-900 p-3 md:p-4 flex flex-col md:flex-row justify-between items-center shadow h-20">
@@ -88,7 +92,7 @@ export default function CourseSidebar() {
             <AccordionItem value="week1">
               <AccordionTrigger className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <FolderIcon className="h-5 w-5" />
+                  <FaFolder className="h-5 w-5" />
                   <span>Week 1</span>
                 </div>
                 <div className="flex items-center gap-1">
@@ -106,8 +110,8 @@ export default function CourseSidebar() {
                     onClick={() => setActiveFolder("video1")}
                     prefetch={false}
                   >
-                    <FileIcon className="h-4 w-4" />
-                    <span>Video 1</span>
+                    <IoVideocamOutline className="h-5 w-5" />
+                    <span>Introduction to Cohort</span>
                   </Link>
                   <Link
                     href="#"
@@ -117,8 +121,8 @@ export default function CourseSidebar() {
                     onClick={() => setActiveFolder("note1")}
                     prefetch={false}
                   >
-                    <FileIcon className="h-4 w-4" />
-                    <span>Note 1</span>
+                    <MdOutlineAssignmentTurnedIn className="h-5 w-5" />
+                    <span>Assignment 1</span>
                   </Link>
                   <Link
                     href="#"
@@ -128,8 +132,8 @@ export default function CourseSidebar() {
                     onClick={() => setActiveFolder("assignment1")}
                     prefetch={false}
                   >
-                    <FileIcon className="h-4 w-4" />
-                    <span>Assignment 1</span>
+                    <FileIcon className="h-5 w-5" />
+                    <span>Notes 1</span>
                   </Link>
                 </div>
               </AccordionContent>

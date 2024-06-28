@@ -9,7 +9,7 @@ const Page = () => {
   console.log(data,message,loading)
   return (
     <>
-   { loading?<HomePageSkl/>:<div className='flex justify-start items-center flex-wrap'>
+   { loading?<HomePageSkl/>:<div className='flex justify-start items-center flex-wrap '>
     {data&&data.map((item)=>(
         <Link href={`/course/detail/${item.Regdomain._id}`} key={item._id}><Card title={item.Regdomain.title} description={item.Regdomain.desc} duration={item.Regdomain.duration} validity={"1"} progress={20} img={item.Regdomain.img} skills={item.Regdomain.skills}/></Link>
       ))}
