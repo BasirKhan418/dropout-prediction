@@ -49,7 +49,9 @@ if(res.ansession){
 router.push("/login");
   },4000)
 }
-router.push("/login");
+setTimeout(()=>{
+  router.push("/login");
+    },3000)
 }
 }
   useEffect(()=>{

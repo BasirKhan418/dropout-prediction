@@ -16,7 +16,7 @@ import {
   } from "@/components/ui/input-otp"
 import axios from "axios"
   
-export function Login() {
+export function AdminLogin() {
     const [email,setEmail] = useState("");
     const [otp,setOtp] = useState("");
     const [isOtpsent,setIsOtpsent]=useState(false);
@@ -36,8 +36,9 @@ const handleOtpSend = async(e)=>{
     toast.error("Please enter your email");
     return
   }
+  try{
   setLoading(true);
-   let data = await axios.post("/api/auth",{email:email.toLowerCase(),type:"send"})
+   let data = await axios.post("/api/adminauth",{email:email.toLowerCase(),type:"send"})
    setLoading(false)
     if(data.data.success){
         setIsOtpsent(true);
@@ -49,19 +50,24 @@ const handleOtpSend = async(e)=>{
        console.log(data)
     }
 }
+catch(err){
+    toast.error("Something went wrong try again after some time!"+err)
+    setLoading(false);
+}
+}
 const hanldeVerifyOtp = async()=>{ 
 if(otp==""){
   toast.error("Please enter otp");
   return
 }
 setLoading(true);
-let data = await axios.post("/api/auth",{email:email,type:"verify",otp:otp})
+let data = await axios.post("/api/adminauth",{email:email,type:"verify",otp:otp})
    setLoading(false)
     if(data.data.success){
         setIsOtpsent(true);
         toast.success(data.data.message)
-        localStorage.setItem("dilmstoken",data.data.token);
-        router.push("/")
+        localStorage.setItem("dilmsadmintoken",data.data.token);
+        router.push("/admin")
     }
     else{
       toast.error(data.data.message);
@@ -87,9 +93,9 @@ console.log(otp);
         height={65} // Specify the height of the image
       />
     </div>
-            <h1 className="text-3xl font-bold">Login to DI-LMS</h1>
+            <h1 className="text-3xl font-bold">Admin Login to DI-LMS</h1>
             <p className="text-balance text-muted-foreground ">
-              Enter your email to login to your account
+              Enter your email to login to your admin account.
             </p>
           </div>
           <div className="grid gap-4">

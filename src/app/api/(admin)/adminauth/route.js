@@ -1,10 +1,9 @@
 const { NextResponse } = require("next/server")
-import ConnectDb from "../../../../middleware/db";
-import InternUser from "../../../../models/InternUser";
-import Otp from "../../../../models/Otp";
+import ConnectDb from "../../../../../middleware/db";
+import Otp from "../../../../../models/Otp";
 import nodemailer from "nodemailer";
 import jwt from "jsonwebtoken";
-import Auth from "../../../../models/Auth";
+import Admin from "../../../../../models/Admin";
 export const POST= async(req,res)=>{
   let reqdata = await req.json();
   //if type is send then send otp to email
@@ -24,7 +23,8 @@ export const POST= async(req,res)=>{
     //getting userdata from request
    
     //checking if user is registered or not
-    let data = await InternUser.find({email:reqdata.email,status:"Registered"});
+    let data = await Admin.find({email:reqdata.email});
+   
     //if user is registered then send otp to email
     if(data.length>0){
       //deleting previous otp if exists
@@ -37,13 +37,13 @@ export const POST= async(req,res)=>{
     const info = await transporter.sendMail({
       from: 'account@devsindia.in', // sender address (correct format)
       to: `${reqdata.email}`, // list of receivers
-      subject: `Your DI-LMS Login OTP: Secure Access Code Inside`, // Subject line
+      subject: `Your DI-LMS Admin Login OTP: Secure Access Code Inside`, // Subject line
       text: "DevsIndiaOrg", // plain text body
       html: `
       <body style="font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 0;">
           <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); overflow: hidden;">
               <div style="background-color: #007bff; color: #ffffff; padding: 20px; text-align: center;">
-                  <h1 style="margin: 0;">Login Verification</h1>
+                  <h1 style="margin: 0;">Admin Login Verification</h1>
               </div>
               <div style="padding: 20px;">
                   <p>Dear ${data[0].name},</p>
@@ -67,7 +67,7 @@ export const POST= async(req,res)=>{
     }
     //if user is not registered then send message user not found
     else{
-      return NextResponse.json({message:"user not found",success:false});
+      return NextResponse.json({message:"Admin not found",success:false});
     }
     
    }
@@ -87,13 +87,11 @@ export const POST= async(req,res)=>{
     if(otpdata!=null){
       console.log("indide")
       //geeting user data
-      let data = await InternUser.find({email:reqdata.email,status:"Registered"});
+      let data = await Admin.find({email:reqdata.email});
       //creating token
       let token  = jwt.sign({email:reqdata.email,id:data[0]._id,name:data[0].name},process.env.JWT_SECRET);
-      //deleting previous auth data
-      await Auth.deleteOne({email:reqdata.email})
-      //creating new auth data
-      let authc = await Auth.create({email:reqdata.email,userid:data[0]._id,name:data[0].name,token:token});
+      //storing the token in admin
+      let tokemstore = await Admin.findOneAndUpdate({email:reqdata.email},{token:token})
       return NextResponse.json({success:true,message:"Otp Validated,Login successfully...",token:token})
     }
     //if not correct

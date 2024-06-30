@@ -4,6 +4,7 @@ import "./globals.css";
 import { Sidebar } from "@/utilities/Sidebar";
 import { usePathname } from "next/navigation";
 import NextTopLoader from 'nextjs-toploader';
+import AdminSidebar from "@/utilities/Admin/AdminSidebar";
 const inter = Inter({ subsets: ["latin"] });
 
  const metadata = {
@@ -20,7 +21,18 @@ console.log(pathname);
       <NextTopLoader 
       color="#FF0000"
       />
-        {pathname=="/login"||pathname.startsWith("/course/detail")?children:<Sidebar>{children}</Sidebar>}
+      {pathname === "/adminlogin" ? (
+  children
+) : pathname.startsWith("/admin") ? (
+  <AdminSidebar>{children}</AdminSidebar>
+) : pathname === "/login" || pathname.startsWith("/course/detail") ? (
+  children
+) : (
+  // Optionally handle other paths if needed
+  
+  <Sidebar>{children}</Sidebar>
+)}
+
         </body>
     </html>
   );
