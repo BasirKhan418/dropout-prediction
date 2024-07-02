@@ -81,11 +81,11 @@ export const POST= async(req,res)=>{
   else{
    try{
     console.log(reqdata)
-    let otpdata = await Otp.findOne({email:reqdata.email,otp:reqdata.otp})
-    console.log(otpdata);
-    //if otp correct
-    if(otpdata!=null){
-      console.log("indide")
+    let otpdata = await Otp.findOne({email:reqdata.email})
+    if(otpdata==null){
+      return NextResponse.json({success:false,message:"Admin not found."})
+    }
+    if(otpdata.otp==reqdata.otp){
       //geeting user data
       let data = await Admin.find({email:reqdata.email});
       //creating token
