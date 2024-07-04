@@ -239,7 +239,7 @@ export function Sidebar({children}) {
             </DropdownMenuContent>
           </DropdownMenu>
         </header>
-        <Logout isOpen={isOpen} setIsOpen={setIsOpen}/>
+        <Logout isOpen={isOpen} setIsOpen={setIsOpen} type="user"/>
         <main className="flex-1 overflow-y-auto p-4">
           {children}
         </main>

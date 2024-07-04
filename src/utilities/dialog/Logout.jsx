@@ -4,7 +4,7 @@
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog"
 import { useRouter } from "next/navigation"
-export default function Logout({setIsOpen, isOpen}) {
+export default function Logout({setIsOpen, isOpen,type}) {
     const router = useRouter();
   return (
     <>
@@ -27,8 +27,15 @@ export default function Logout({setIsOpen, isOpen}) {
               variant="destructive"
               onClick={() => {
                 setIsOpen(false)
-                localStorage.removeItem("dilmstoken");
-                router.push("/login");
+                if(type=="admin"){
+                  localStorage.removeItem("dilmsadmintoken");
+                  router.push("/adminlogin");
+                }
+                else{
+                  localStorage.removeItem("dilmstoken");
+                  router.push("/login");
+                }
+                
               }}
               className="flex-1"
             >

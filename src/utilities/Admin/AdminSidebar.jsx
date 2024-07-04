@@ -1,17 +1,24 @@
 
 import Link from "next/link"
+import { Fragment } from "react"
 import { Sheet, SheetTrigger, SheetContent } from "@/components/ui/sheet"
 import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuItem } from "@/components/ui/dropdown-menu"
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card"
+import { MdNavigateNext } from "react-icons/md";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
 import Image from "next/image"
+import { useState } from "react"
+import Logout from "../dialog/Logout"
+import { usePathname } from "next/navigation"
 export default function AdminSidebar({children}) {
+  const pathname = usePathname();
+  const [isOpen, setIsOpen] = useState(false)
   return (
     <div className="flex min-h-screen w-full">
       <aside className="sticky top-0 hidden h-screen w-[280px] lg:w-[280px] shrink-0 border-r bg-background md:block">
         <div className="flex h-16 items-center justify-between border-b px-4">
-        <Link href="/" className="flex items-center gap-2 font-semibold">
+        <Link href="/admin" className="flex items-center gap-2 font-semibold">
               <div>
                 <Image 
                   src="https://res.cloudinary.com/dst73auvn/image/upload/v1718998002/ljyzihnrzwfd61veakyb.png" 
@@ -25,7 +32,7 @@ export default function AdminSidebar({children}) {
         </div>
         <nav className="flex flex-col space-y-1 px-4 py-6">
           <Link
-            href="#"
+            href="/admin"
             className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium hover:bg-muted"
             prefetch={false}
           >
@@ -33,7 +40,7 @@ export default function AdminSidebar({children}) {
             <span>Dashboard</span>
           </Link>
           <Link
-            href="#"
+            href="/admincourse"
             className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium hover:bg-muted"
             prefetch={false}
           >
@@ -98,7 +105,7 @@ export default function AdminSidebar({children}) {
               <span className="">DevsIndia</span>
             </Link>
                   <Link
-                    href="#"
+                    href="/admin"
                     className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
                     prefetch={false}
                   >
@@ -106,7 +113,7 @@ export default function AdminSidebar({children}) {
                     Dashboard
                   </Link>
                   <Link
-                    href="#"
+                    href="/admincourse"
                     className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
                     prefetch={false}
                   >
@@ -148,7 +155,17 @@ export default function AdminSidebar({children}) {
                 </nav>
               </SheetContent>
             </Sheet>
-            <h1 className="text-lg font-semibold">Dashboard</h1>
+            <div className="text-lg font-semibold flex justify-center items-center ">
+      Dashboard
+      {pathname.split('/').map((item, index) => (
+        item && (
+          <Fragment key={index} >
+            <MdNavigateNext className="text-lg text-gray-400 mx-2" />
+            <h1 className="hidden md:block lg:block">{item.charAt(0).toUpperCase() + item.slice(1)}</h1>
+          </Fragment>
+        )
+      ))}
+    </div>
           </div>
           <div className="flex items-center gap-4">
             <DropdownMenu>
@@ -212,11 +229,12 @@ export default function AdminSidebar({children}) {
                 <Link href={"/adminprofile"}><DropdownMenuItem>Profile</DropdownMenuItem></Link>
                 <DropdownMenuItem>Settings</DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>Logout</DropdownMenuItem>
+                <DropdownMenuItem onClick={()=>setIsOpen(true)}>Logout</DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
         </header>
+        <Logout isOpen={isOpen} setIsOpen={setIsOpen} type="admin"/>
        {children}
       </div>
     </div>

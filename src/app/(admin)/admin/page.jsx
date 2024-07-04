@@ -5,42 +5,35 @@ import SessionDetected from '@/utilities/Auth/SessionDetected'
 import HomePageSkl from '@/utilities/skeleton/HomePageSkl'
 import { Toaster,toast } from 'sonner'
 import { useRouter } from 'next/navigation'
+import { ValidatesFunc } from '../../../../functions/authfunc'
 const Page = () => {
     const router = useRouter();
     const [isansession,setisansession]=useState(false);
     const [data,setData]=useState(null);
     const [loading,setLoading] = useState(false)
-    const validatesFunc = async(token)=>{
-        console.log(token);
-        setLoading(true);
-       const response = await fetch("/api/adminhomeauth",{
-        method:"POST",
-        headers:{
-          "content-type":"application/json",
-          "token":token
-        }
-       })
-      const res = await response.json();
-        setLoading(false);
-      console.log(res);
-      if(res.success){
-    setData(res.data)
+    const validates = async(token)=>{
+      setLoading(true);
+      let data =  await ValidatesFunc(token);
+      setLoading(false);
+      console.log(data)
+      if(data.success){
+        setData(data.data)
       }
       else{
-      toast.error(res.message);
-      if(res.ansession){
-        setisansession(true);
+        toast.error(data.message);
+        if(data.ansession){
+          setisansession(true);
+          setTimeout(()=>{
+            router.push("/adminlogin");
+          },4000)
+        }
         setTimeout(()=>{
-      router.push("/adminlogin");
-        },4000)
+          router.push("/adminlogin");
+        },3000)
       }
-      setTimeout(()=>{
-        router.push("/adminlogin");
-          },3000)
-      }
-      }
+    }
       useEffect(()=>{
-    validatesFunc(localStorage.getItem("dilmsadmintoken"))
+    validates(localStorage.getItem("dilmsadmintoken"))
       },[])
   return (
     <div>
