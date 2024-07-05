@@ -41,11 +41,11 @@ const Home = ({name}) => {
           </Card>
           <Card>
             <CardHeader>
-              <CardTitle>Revenue</CardTitle>
-              <CardDescription>The total revenue</CardDescription>
+              <CardTitle>Total Products</CardTitle>
+              <CardDescription>The total products</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="text-4xl font-bold text-purple-500">$42,356</div>
+              <div className="text-4xl font-bold text-purple-500">42,356</div>
             </CardContent>
           </Card>
         </div>
@@ -55,36 +55,36 @@ const Home = ({name}) => {
               <CardTitle>Manage Courses</CardTitle>
               <CardDescription>Add, edit, and delete courses</CardDescription>
             </CardHeader>
-            <CardContent>
+            <Link href={"/admincourse"}><CardContent>
               <div className="grid gap-4">
-                <Button>Add New Course</Button>
+              <Button>Add New Course</Button>
                 <Button variant="outline">View All Courses</Button>
               </div>
-            </CardContent>
+            </CardContent></Link> 
           </Card>
           <Card>
             <CardHeader>
-              <CardTitle>Manage Students</CardTitle>
-              <CardDescription>View and manage student enrollments</CardDescription>
+              <CardTitle>Manage Assignments</CardTitle>
+              <CardDescription>View and evaluate student</CardDescription>
             </CardHeader>
-            <CardContent>
+           <Link href={"/adminassignment"}><CardContent>
               <div className="grid gap-4">
-                <Button>View Student List</Button>
-                <Button variant="outline">Manage Enrollments</Button>
+                <Button>View Assignments List</Button>
+                <Button variant="outline">Manage Assignments</Button>
               </div>
-            </CardContent>
+            </CardContent></Link> 
           </Card>
           <Card>
             <CardHeader>
-              <CardTitle>Manage Instructors</CardTitle>
-              <CardDescription>View and manage instructor profiles</CardDescription>
+              <CardTitle>Manage Projects</CardTitle>
+              <CardDescription>View and manage projects and evaluate</CardDescription>
             </CardHeader>
-            <CardContent>
+            <Link href={"/adminprojects"}><CardContent>
               <div className="grid gap-4">
-                <Button>View Instructor List</Button>
-                <Button variant="outline">Manage Profiles</Button>
+                <Button>View Projects List</Button>
+                <Button variant="outline">Manage Project</Button>
               </div>
-            </CardContent>
+            </CardContent></Link>
           </Card>
         </div>
         <div className="mt-8 grid gap-6 md:grid-cols-3 lg:grid-cols-3">

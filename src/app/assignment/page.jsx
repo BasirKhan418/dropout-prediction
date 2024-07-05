@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Badge } from "@/components/ui/badge"
-
+import Link from "next/link"
 export default function Component() {
   return (
     <div className="w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -29,6 +29,7 @@ export default function Component() {
                   <DialogTrigger asChild>
                     <Button size="sm">Submit</Button>
                   </DialogTrigger>
+                 <Link href="/assignment/naldlkdlk"><Button size="sm">View</Button></Link> 
                   <DialogContent className="sm:max-w-[425px]">
                     <DialogHeader>
                       <DialogTitle>Submit Assignment</DialogTitle>
@@ -71,8 +72,14 @@ export default function Component() {
                 <div className="text-sm text-muted-foreground">Due: July 15, 2023</div>
                 <Dialog>
                   <DialogTrigger asChild>
+            
+
+               
                     <Button size="sm">Submit</Button>
+                    
+                   
                   </DialogTrigger>
+                  <Button size="sm">View</Button>
                   <DialogContent className="sm:max-w-[425px]">
                     <DialogHeader>
                       <DialogTitle>Submit Assignment</DialogTitle>

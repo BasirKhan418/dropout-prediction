@@ -2,10 +2,13 @@
 import Link from "next/link"
 import { Fragment } from "react"
 import { Sheet, SheetTrigger, SheetContent } from "@/components/ui/sheet"
+import { MdOutlineAssignmentTurnedIn } from "react-icons/md";
 import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuItem } from "@/components/ui/dropdown-menu"
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card"
 import { MdNavigateNext } from "react-icons/md";
+import { AiOutlineNotification } from "react-icons/ai";
+import {FolderGit2} from "lucide-react"
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
 import Image from "next/image"
 import { useState } from "react"
@@ -48,36 +51,36 @@ export default function AdminSidebar({children}) {
             <span>Courses</span>
           </Link>
           <Link
-            href="#"
+            href="/adminassignment"
+            className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium hover:bg-muted"
+            prefetch={false}
+          >
+            <MdOutlineAssignmentTurnedIn className="h-5 w-5" />
+            <span>Assignments</span>
+          </Link>
+          <Link
+            href="/adminprojects"
+            className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium hover:bg-muted"
+            prefetch={false}
+          >
+            <FolderGit2 className="h-5 w-5" />
+            <span>Projects</span>
+          </Link>
+          <Link
+            href="/adminnotification"
+            className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium hover:bg-muted"
+            prefetch={false}
+          >
+            <AiOutlineNotification className="h-5 w-5" />
+            <span>Send Notification</span>
+          </Link>
+          <Link
+            href="/admininstructor"
             className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium hover:bg-muted"
             prefetch={false}
           >
             <UsersIcon className="h-5 w-5" />
-            <span>Students</span>
-          </Link>
-          <Link
-            href="#"
-            className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium hover:bg-muted"
-            prefetch={false}
-          >
-            <SchoolIcon className="h-5 w-5" />
-            <span>Instructors</span>
-          </Link>
-          <Link
-            href="#"
-            className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium hover:bg-muted"
-            prefetch={false}
-          >
-            <BarChartIcon className="h-5 w-5" />
-            <span>Analytics</span>
-          </Link>
-          <Link
-            href="#"
-            className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium hover:bg-muted"
-            prefetch={false}
-          >
-            <SettingsIcon className="h-5 w-5" />
-            <span>Settings</span>
+            <span>Instructor</span>
           </Link>
         </nav>
       </aside>
@@ -121,29 +124,29 @@ export default function AdminSidebar({children}) {
                     Courses
                   </Link>
                   <Link
-                    href="#"
+                    href="/adminassignment"
                     className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
                     prefetch={false}
                   >
-                    <UsersIcon className="h-5 w-5" />
-                    Students
+                    <MdOutlineAssignmentTurnedIn className="h-5 w-5" />
+                    Assignments
                   </Link>
                   <Link
-                    href="#"
-                    className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
-                    prefetch={false}
-                  >
-                    <SchoolIcon className="h-5 w-5" />
-                    Instructors
-                  </Link>
-                  <Link
-                    href="#"
-                    className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
-                    prefetch={false}
-                  >
-                    <BarChartIcon className="h-5 w-5" />
-                    Analytics
-                  </Link>
+            href="/adminprojects"
+            className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium hover:bg-muted"
+            prefetch={false}
+          >
+            <FolderGit2 className="h-5 w-5" />
+            <span>Projects</span>
+          </Link>
+          <Link
+            href="/admininstructor"
+            className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium hover:bg-muted"
+            prefetch={false}
+          >
+            <UsersIcon className="h-5 w-5" />
+            <span>Instructor</span>
+          </Link>
                   <Link
                     href="#"
                     className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"

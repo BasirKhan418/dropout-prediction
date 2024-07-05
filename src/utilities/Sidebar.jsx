@@ -6,6 +6,7 @@ import { BiTask } from "react-icons/bi";
 import { GrProjects } from "react-icons/gr";
 import { GiArtificialIntelligence } from "react-icons/gi";
 import { usePathname } from "next/navigation";
+import {FolderGit2} from "lucide-react"
 import {
   Bell,
   CircleUser,
@@ -94,7 +95,7 @@ export function Sidebar({children}) {
                 href="project"
                 className={`flex items-center gap-3 rounded-lg ${pathname=="project"?"bg-muted text-primary":" text-muted-foreground"} px-3 py-2  transition-all hover:text-primary`}
               >
-                <GrProjects  className="h-4 w-4" />
+                <FolderGit2  className="h-5 w-5" />
                 Projects
               </Link>
               <Link
