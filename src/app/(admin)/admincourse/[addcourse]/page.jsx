@@ -4,10 +4,11 @@ import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/
 import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu"
 import { Badge } from "@/components/ui/badge"
-import {ClipboardList,FolderGit2,TvMinimalPlay,X} from "lucide-react"
-import { useState } from "react"
+import {ClipboardList,FolderGit2,TvMinimalPlay,X,BookCheck,NotebookPen} from "lucide-react"
+import { useEffect, useState } from "react"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { Toaster,toast } from "sonner"
 import Chat from "@/utilities/Ai/Chat"
 import {
   Dialog,
@@ -29,10 +30,44 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+
+import ProfielSpinner from "@/utilities/Spinner/ProfielSpinner"
 import { set } from "mongoose"
-
-
-export default function Component() {
+export default function Component({params}) {
+  //useEffect
+  const fetchallcoursedata = async()=>{
+try{
+  setLoading(true)
+const res = await fetch(`/api/contentcrud?id=${params.addcourse}`,{
+  method:"GET",
+  headers:{
+    "Content-Type":"application/json",
+    "token":localStorage.getItem("dilmsadmintoken")
+  }
+})
+const result = await res.json()
+setLoading(false)
+console.log(result)
+setWeeks(result.data.content)
+toast.success(result.message)
+}
+catch(err){
+  toast.error("Something went wrong! try again later"+err)
+}
+  }
+  //ender the fetch all course data
+  useEffect(()=>{
+fetchallcoursedata()
+  },[])
   //states
   const [aiopen,setaiopen] = useState(false)
   const [alertopen,setalertopen] = useState(false)
@@ -40,7 +75,17 @@ export default function Component() {
   const [alertfor,setalertfor] = useState("")
   const [createweek,setcreateweek] = useState(false)
   const [index,setindex] = useState("")
+  const [loading,setLoading] = useState(false)
+  const [weekindex,setweekindex] = useState("")
   const [update,setupdate] = useState(false)
+  const [createcontentbool,setcreatecontentbool] = useState(false)
+  const [createcontentform,setcreatecontentform] = useState({
+    name:"",
+    description:"",
+    link:"",
+    type:"",
+    comment:[]
+  })
   const [createweekform,setcreateweekform] = useState({
     name:"",
     type:"",
@@ -50,6 +95,11 @@ export default function Component() {
 //handlechanges
 const handlecreateformchnage = (e)=>{
   setcreateweekform({...createweekform,[e.target.id]:e.target.value})
+}
+//handlecontentformchanges
+const handlecreatecontentformchnage = (e)=>{
+  setcreatecontentform({...createcontentform,[e.target.id]:e.target.value})
+
 }
 //handlesubmits
 const handlecreateweeksubmit = ()=>{
@@ -75,6 +125,28 @@ const handleupdatesubmit = ()=>{
   setcreateweekform({name:"",type:"",description:"",content:[]})
   setindex("")
 }
+//content submit form
+const handlecreatecontentsubmit = ()=>{
+  console.log(createcontentform)
+  let temp = weeks
+  temp[index].content.push(createcontentform)
+  setWeeks([...temp])
+  setcreatecontentbool(false)
+  setindex("")
+  setcreatecontentform({name:"",type:"",description:"",link:""})
+
+}
+//update content submit
+const handleupdatecontentsubmit = ()=>{
+  let temp = weeks
+  temp[index].content.push(createcontentform)
+  setWeeks([...temp])
+  setcreatecontentbool(false)
+  setcreatecontentform({name:"",type:"",description:"",link:""})
+  setupdate(false)
+  setindex("")
+
+}
 //delete week
 const deleteweek = (index)=>{
 setindex(index)
@@ -92,68 +164,80 @@ else{
   setalertopen(true)
 }
 }
+//update content
+const updatecontent = (index,indexi)=>{
+  setupdate(true)
+  setindex(indexi)
+  setweekindex(index)
+  setcreatecontentform(weeks[index].content[indexi])
+  setcreatecontentbool(true)
+}
+const updatecontentmodal=()=>{
+  const temp = weeks
+  temp[weekindex].content[index]=createcontentform
+  setWeeks([...temp])
+  setcreatecontentbool(false)
+  setupdate(false)
+  setcreatecontentform({name:"",type:"",description:"",link:""})
+  setindex("")
+  setweekindex("")
+}
+//trigger delete alert
+const deletecontent = (index,indexi)=>{
+setindex(indexi)
+setweekindex(index)
+setalertfor("content")
+if(alertconfirm){
+  let temp = weeks
+  temp[index].content.splice(indexi,1)
+  setWeeks([...temp])
+  setalertopen(false)
+  setalertconfirm(false)
+  setalertfor("")
+  setindex("")
+  setweekindex("")
+}
+else{
+  setalertopen(true)
+}
+}
+
 //chnagesapi in db
-  const [weeks, setWeeks] = useState([
-    {
-      name: "Week 1",
-      type:"Orientation, Recording, Live Class",
-      description: "This is the first week of the course",
-      content: [
-        {
-          name: "Weekly Video",
-          description: "This is the video of the week",
-          link: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-          type: "video"
-        },
-        {
-          name: "Weekly Assignment",
-          description: "This is the report of the week",
-          link: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-          type: "assignment"
-        }
-        ,
-        {
-          name: "Weekly Project",
-          description: "This is the report of the week",
-          link: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-          type: "project"
-        },
-        {
-          name: "Weekly Meeting",
-          description: "This is the report of the week",
-          link: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-          type: "meeting"
-        }
-      ]
-    },
-    {
-      name: "Week 2",
-      type:"Orientation, Recording",
-      description: "This is the first week of the course",
-      content: [
-        {
-          name: "Weekly Video",
-          description: "This is the video of the week",
-          link: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-          type: "video"
-        },
-        {
-          name: "Weekly Assignment",
-          description: "This is the report of the week",
-          link: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-          type: "assignment"
-        },
-        {
-          name: "Weekly Meeting",
-          description: "This is the report of the week",
-          link: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-          type: "meeting"
-        }
-      ]
+  const [weeks, setWeeks] = useState([])
+//saving all data into the data base
+const handleSubmit = async()=>{
+  const data = {content:weeks,id:params.addcourse}
+  console.log(data)
+  try{
+    setLoading(true)  
+   const res = await fetch("/api/contentcrud",{
+      method:"POST",
+      headers:{
+        "Content-Type":"application/json",
+        "token":localStorage.getItem("dilmsadmintoken")
+      },
+      body:JSON.stringify(data)
+   })
+   const result = await res.json()
+   console.log(result)  
+    setLoading(false)
+    if(result.success){
+      toast.success(result.message)
     }
-  ])
+    else{
+      toast.error(result.message)
+    }
+
+  }
+  catch(err){
+toast.error("Something went wrong! try again later"+err)
+  }
+}
   return (
     <>
+     <Toaster position="top-center" expand={false}/>
+   { loading?<ProfielSpinner/>:<>
+   
     <div className="mx-4 my-2 ">
     <Card className="w-full max-w-2xl lg:max-w-4xl">
       <CardHeader>
@@ -175,18 +259,24 @@ else{
             
 
               
-              {item.content&&item.content.map((cont,index)=>(<div className="flex items-center justify-between" key={index}>
+              {item.content&&item.content.map((cont,indexi)=>(<div className="flex items-center justify-between" key={indexi}>
            
                 {cont.type=="video"&&<span className="flex justify-center items-center "> <VideoIcon className="h-5 w-5 text-muted-foreground mx-2" /> {cont.name}</span>}
                {cont.type=="assignment"&& <span className="flex justify-center items-center ">  <ClipboardList className="h-5 w-5 text-muted-foreground mx-2" /> {cont.name}</span>}
                {cont.type=="project"&& <span className="flex justify-center items-center ">  <FolderGit2 className="h-5 w-5 text-muted-foreground mx-2" /> {cont.name}</span>}
                {cont.type=="meeting"&& <span className="flex justify-center items-center ">  <TvMinimalPlay className="h-5 w-5 text-muted-foreground mx-2" /> {cont.name}</span>}
+               {cont.type=="test"&& <span className="flex justify-center items-center ">  <BookCheck className="h-5 w-5 text-muted-foreground mx-2" /> {cont.name}</span>}
+               {cont.type=="note"&& <span className="flex justify-center items-center ">  <NotebookPen className="h-5 w-5 text-muted-foreground mx-2" /> {cont.name}</span>}
                 <div className="flex items-center gap-2">
-                  <Button variant="ghost" size="icon">
+                  <Button variant="ghost" size="icon" onClick={()=>{
+                    updatecontent(index,indexi)
+                  }}>
                     <FilePenIcon className="h-4 w-4" />
                     <span className="sr-only">Edit</span>
                   </Button>
-                  <Button variant="ghost" size="icon">
+                  <Button variant="ghost" size="icon" onClick={()=>{
+                    deletecontent(index,indexi)
+                  }}>
                     <TrashIcon className="h-4 w-4" />
                     <span className="sr-only">Delete</span>
                   </Button>
@@ -196,7 +286,10 @@ else{
              
              
               <div className="flex justify-start items-center w-full">
-              <Button className="bg-black rounded-full px-6 mx-2" size="sm">Create Content</Button>
+              <Button className="bg-black rounded-full px-6 mx-2" size="sm" onClick={()=>{
+                setcreatecontentbool(true)
+                setindex(index) 
+              }}>Create Content</Button>
               <Button className="bg-black rounded-full px-6 mx-2" size="sm" onClick={()=>updateweek(index)}>Update Week</Button>
               <Button className="bg-black rounded-full px-6 mx-2" size="sm" onClick={()=>{deleteweek(index)}}>Delete Week</Button>
               </div>
@@ -208,7 +301,7 @@ else{
       </CardContent>
       <CardFooter className="flex justify-end">
        <Button className="bg-black rounded-full px-6 mx-2" onClick={()=>{setcreateweek(true)}}>Create</Button>
-       <Button className="bg-black rounded-full px-6 mx-2">Save</Button>
+       <Button className="bg-black rounded-full px-6 mx-2" onClick={handleSubmit}>Save</Button>
       </CardFooter>
     </Card>
     
@@ -284,6 +377,93 @@ else{
         </DialogFooter>
       </DialogContent>
     </Dialog>
+    {/* create content dialog starts from here */}
+    <Dialog open={createcontentbool}>
+      <DialogContent className="sm:max-w-[625px] ">
+        <div className="absolute right-4 top-4 cursor-pointer" >
+        <X onClick={()=>{
+          setcreatecontentbool(false)
+          setupdate(false)
+          setcreatecontentform({name:"",type:"",description:"",link:""})
+          setindex("")
+          setweekindex("")
+          }}/>
+        </div>
+        <DialogHeader>
+          <DialogTitle>Create Content Video,Assigments ,Meetings and Projects</DialogTitle>
+          <DialogDescription>
+            Make changes to your Video,Assigments ,Meetings and Projects here. Click save when you're done.
+          </DialogDescription>
+        </DialogHeader>
+        <div className="grid gap-4 py-4">
+          <div className="grid grid-cols-4 items-center gap-4">
+            
+            <Label htmlFor="name" className="text-right">
+              Name
+            </Label>
+            <Input
+              id="name"
+              defaultValue=""
+              onChange={handlecreatecontentformchnage}
+              value={createcontentform.name}
+              className="col-span-3"
+              placeholder="Weekly Video"
+            />
+          </div>
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="type" className="text-right">
+              Type
+            </Label>
+            <Select id="type" value={createcontentform.type} onValueChange={(value) =>
+        handlecreatecontentformchnage({ target: { id: 'type', value } })
+      } >
+      <SelectTrigger className="lg:w-[425px]" >
+        <SelectValue placeholder="Select a Type" />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectGroup >
+          <SelectLabel>Content Type</SelectLabel>
+          <SelectItem value="video">Video</SelectItem>
+          <SelectItem value="assignment">Assignment</SelectItem>
+          <SelectItem value="meeting">Meeting</SelectItem>
+          <SelectItem value="project">Projects</SelectItem>
+          <SelectItem value="note">Notes</SelectItem>
+          <SelectItem value="test">Test</SelectItem>
+        </SelectGroup>
+      </SelectContent>
+    </Select>
+          </div>
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="description" className="text-right">
+              Description
+            </Label>
+            <Input
+              id="description"
+              onChange={handlecreatecontentformchnage}
+              value={createcontentform.description}
+              className="col-span-3"
+              placeholder="This is the first week of the course"
+            />
+          </div>
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="link" className="text-right">
+              Link
+            </Label>
+            <Input
+              id="link"
+              onChange={handlecreatecontentformchnage}
+              value={createcontentform.link}
+              className="col-span-3"
+              placeholder="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+            />
+          </div>
+        </div>
+        <DialogFooter>
+         {!update&& <Button onClick={handlecreatecontentsubmit}>Save changes</Button>}
+         {update&& <Button onClick={updatecontentmodal}>Update changes</Button>}
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
     {/* alerts starts here */}
     <AlertDialog open={alertopen}>
 
@@ -306,6 +486,9 @@ else{
         if(alertfor=="week"){
           deleteweek(index)
         }
+        else if(alertfor=="content"){
+          deletecontent(weekindex,index)
+        }
         else{
           setalertopen(false)
         }
@@ -314,6 +497,7 @@ else{
   </AlertDialogContent>
 </AlertDialog>
 
+    </>}
     </>
   )
 }

@@ -12,10 +12,13 @@ import { IoMdArrowRoundBack } from "react-icons/io";
 import { IoVideocamOutline } from "react-icons/io5";
 import { MdOutlineAssignmentTurnedIn } from "react-icons/md";
 import { FaFolder } from "react-icons/fa";
-export default function CourseSidebar() {
+import {ClipboardList,FolderGit2,TvMinimalPlay,X,BookCheck,NotebookPen,Video} from "lucide-react"
+export default function CourseSidebar({weeksdata,alldata}) {
   const [activeFolder, setActiveFolder] = useState("overview")
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isopen,setIsopen] = useState(true);
+
+  console.log(weeksdata)
  
   return (
     <div className=" h-[100vh] w-full flex-col">
@@ -31,7 +34,7 @@ export default function CourseSidebar() {
         <img src="https://res.cloudinary.com/dst73auvn/image/upload/v1718998002/ljyzihnrzwfd61veakyb.png" alt="Company Logo" className="h-10 mr-2" />
         <h1 className="text-xl font-bold text-gray-800 dark:text-gray-200">DevsIndia</h1>
       </div>
-      <h2 className="text-md md:text-lg font-bold text-gray-800 dark:text-gray-400 mb-2 md:mb-0">Full Stack Developement</h2>
+      <h2 className="text-md md:text-lg font-bold text-gray-800 dark:text-gray-400 mb-2 md:mb-0">{alldata.title}</h2>
       <div className="flex space-x-3">
         <button className="flex items-center bg-blue-600 text-white px-3 py-1.5 rounded-full shadow hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 transition duration-300 ease-in-out">
           <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -89,11 +92,11 @@ export default function CourseSidebar() {
             </div>
           </div>
           <Accordion type="single" collapsible>
-            <AccordionItem value="week1">
+            {weeksdata&&weeksdata.map((item)=>(<AccordionItem value={item.name}>
               <AccordionTrigger className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <FaFolder className="h-5 w-5" />
-                  <span>Week 1</span>
+                  <FolderIcon className="h-5 w-5" />
+                  <span className="font-semibold">{item.name}</span>
                 </div>
                 <div className="flex items-center gap-1">
                   <ChevronRightIcon className="h-4 w-4 transition-transform data-[state=open]:rotate-90" />
@@ -102,140 +105,88 @@ export default function CourseSidebar() {
               </AccordionTrigger>
               <AccordionContent>
                 <div className="grid gap-2 pl-6">
-                  <Link
+                  {item.content.map((item,index)=>(<>
+                 { item.type=="video"&&<Link
                     href="#"
-                    className={`flex items-center gap-2 rounded-md px-2 py-1 transition-colors hover:bg-accent hover:text-accent-foreground ${
+                    key={index}
+                    className={`flex items-center gap-2 rounded-md px-2 py-1 transition-colors hover:bg-accent hover:text-accent-foreground font-medium ${
                       activeFolder === "video1" ? "bg-accent text-accent-foreground" : ""
                     }`}
                     onClick={() => setActiveFolder("video1")}
                     prefetch={false}
                   >
-                    <IoVideocamOutline className="h-5 w-5" />
-                    <span>Introduction to Cohort</span>
-                  </Link>
-                  <Link
+                    <Video className="h-5 w-5" />
+                    <span>{item.name}</span>
+                  </Link>}
+                  { item.type=="note"&&<Link
                     href="#"
-                    className={`flex items-center gap-2 rounded-md px-2 py-1 transition-colors hover:bg-accent hover:text-accent-foreground ${
-                      activeFolder === "note1" ? "bg-accent text-accent-foreground" : ""
+                    key={index}
+                    className={`flex items-center gap-2 rounded-md px-2 py-1 transition-colors hover:bg-accent hover:text-accent-foreground font-medium ${
+                      activeFolder === "video1" ? "bg-accent text-accent-foreground" : ""
                     }`}
-                    onClick={() => setActiveFolder("note1")}
+                    onClick={() => setActiveFolder("video1")}
                     prefetch={false}
                   >
-                    <MdOutlineAssignmentTurnedIn className="h-5 w-5" />
-                    <span>Assignment 1</span>
-                  </Link>
-                  <Link
+                    <NotebookPen className="h-5 w-5" />
+                    <span>{item.name}</span>
+                  </Link>}
+                  { item.type=="assignment"&&<Link
                     href="#"
-                    className={`flex items-center gap-2 rounded-md px-2 py-1 transition-colors hover:bg-accent hover:text-accent-foreground ${
-                      activeFolder === "assignment1" ? "bg-accent text-accent-foreground" : ""
+                    key={index}
+                    className={`flex items-center gap-2 rounded-md px-2 py-1 transition-colors hover:bg-accent hover:text-accent-foreground font-medium ${
+                      activeFolder === "video1" ? "bg-accent text-accent-foreground" : ""
                     }`}
-                    onClick={() => setActiveFolder("assignment1")}
+                    onClick={() => setActiveFolder("video1")}
                     prefetch={false}
                   >
-                    <FileIcon className="h-5 w-5" />
-                    <span>Notes 1</span>
-                  </Link>
+                    <ClipboardList className="h-5 w-5" />
+                    <span>{item.name}</span>
+                  </Link>}
+                  { item.type=="project"&&<Link
+                    href="#"
+                    key={index}
+                    className={`flex items-center gap-2 rounded-md px-2 py-1 transition-colors hover:bg-accent hover:text-accent-foreground font-medium ${
+                      activeFolder === "video1" ? "bg-accent text-accent-foreground" : ""
+                    }`}
+                    onClick={() => setActiveFolder("video1")}
+                    prefetch={false}
+                  >
+                    <FolderGit2 className="h-5 w-5" />
+                    <span>{item.name}</span>
+                  </Link>}
+                  { item.type=="meeting"&&<Link
+                    href="#"
+                    key={index}
+                    className={`flex items-center gap-2 rounded-md px-2 py-1 transition-colors hover:bg-accent hover:text-accent-foreground font-medium ${
+                      activeFolder === "video1" ? "bg-accent text-accent-foreground" : ""
+                    }`}
+                    onClick={() => setActiveFolder("video1")}
+                    prefetch={false}
+                  >
+                    <TvMinimalPlay className="h-5 w-5" />
+                    <span>{item.name}</span>
+                  </Link>}
+                  { item.type=="test"&&<Link
+                    href="#"
+                    key={index}
+                    className={`flex items-center gap-2 rounded-md px-2 py-1 transition-colors hover:bg-accent hover:text-accent-foreground font-medium ${
+                      activeFolder === "video1" ? "bg-accent text-accent-foreground" : ""
+                    }`}
+                    onClick={() => setActiveFolder("video1")}
+                    prefetch={false}
+                  >
+                    <BookCheck className="h-5 w-5" />
+                    <span>{item.name}</span>
+                  </Link>}
+                  
+                  </>))}
+                  
+                
                 </div>
               </AccordionContent>
-            </AccordionItem>
-            <AccordionItem value="week2">
-              <AccordionTrigger className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <FolderIcon className="h-5 w-5" />
-                  <span>Week 2</span>
-                </div>
-                <div className="flex items-center gap-1">
-                  <ChevronRightIcon className="h-4 w-4 transition-transform data-[state=open]:rotate-90" />
-                  <ChevronRightIcon className="h-4 w-4 transition-transform data-[state=open]:rotate-90" />
-                </div>
-              </AccordionTrigger>
-              <AccordionContent>
-                <div className="grid gap-2 pl-6">
-                  <Link
-                    href="#"
-                    className={`flex items-center gap-2 rounded-md px-2 py-1 transition-colors hover:bg-accent hover:text-accent-foreground ${
-                      activeFolder === "video2" ? "bg-accent text-accent-foreground" : ""
-                    }`}
-                    onClick={() => setActiveFolder("video2")}
-                    prefetch={false}
-                  >
-                    <FileIcon className="h-4 w-4" />
-                    <span>Video 2</span>
-                  </Link>
-                  <Link
-                    href="#"
-                    className={`flex items-center gap-2 rounded-md px-2 py-1 transition-colors hover:bg-accent hover:text-accent-foreground ${
-                      activeFolder === "note2" ? "bg-accent text-accent-foreground" : ""
-                    }`}
-                    onClick={() => setActiveFolder("note2")}
-                    prefetch={false}
-                  >
-                    <FileIcon className="h-4 w-4" />
-                    <span>Note 2</span>
-                  </Link>
-                  <Link
-                    href="#"
-                    className={`flex items-center gap-2 rounded-md px-2 py-1 transition-colors hover:bg-accent hover:text-accent-foreground ${
-                      activeFolder === "assignment2" ? "bg-accent text-accent-foreground" : ""
-                    }`}
-                    onClick={() => setActiveFolder("assignment2")}
-                    prefetch={false}
-                  >
-                    <FileIcon className="h-4 w-4" />
-                    <span>Assignment 2</span>
-                  </Link>
-                </div>
-              </AccordionContent>
-            </AccordionItem>
-            <AccordionItem value="week3">
-              <AccordionTrigger className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <FolderIcon className="h-5 w-5" />
-                  <span>Week 3</span>
-                </div>
-                <div className="flex items-center gap-1">
-                  <ChevronRightIcon className="h-4 w-4 transition-transform data-[state=open]:rotate-90" />
-                  <ChevronRightIcon className="h-4 w-4 transition-transform data-[state=open]:rotate-90" />
-                </div>
-              </AccordionTrigger>
-              <AccordionContent>
-                <div className="grid gap-2 pl-6">
-                  <Link
-                    href="#"
-                    className={`flex items-center gap-2 rounded-md px-2 py-1 transition-colors hover:bg-accent hover:text-accent-foreground ${
-                      activeFolder === "video3" ? "bg-accent text-accent-foreground" : ""
-                    }`}
-                    onClick={() => setActiveFolder("video3")}
-                    prefetch={false}
-                  >
-                    <FileIcon className="h-4 w-4" />
-                    <span>Video 3</span>
-                  </Link>
-                  <Link
-                    href="#"
-                    className={`flex items-center gap-2 rounded-md px-2 py-1 transition-colors hover:bg-accent hover:text-accent-foreground ${
-                      activeFolder === "note3" ? "bg-accent text-accent-foreground" : ""
-                    }`}
-                    onClick={() => setActiveFolder("note3")}
-                    prefetch={false}
-                  >
-                    <FileIcon className="h-4 w-4" />
-                    <span>Note 3</span>
-                  </Link>
-                  <Link
-                    href="#"
-                    className={`flex items-center gap-2 rounded-md px-2 py-1 transition-colors hover:bg-accent hover:text-accent-foreground ${
-                      activeFolder === "assignment3" ? "bg-accent text-accent-foreground" : ""
-                    }`}
-                    onClick={() => setActiveFolder("assignment3")}
-                    prefetch={false}
-                  >
-                    <FileIcon className="h-4 w-4" />
-                    <span>Assignment 3</span>
-                  </Link>
-                </div>
-              </AccordionContent>
-            </AccordionItem>
+            </AccordionItem>))}
+           
+          
           </Accordion>
         </div>
         <div className="flex-1 p-8">
