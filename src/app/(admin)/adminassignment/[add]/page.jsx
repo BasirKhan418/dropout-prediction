@@ -8,9 +8,10 @@ import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table"
-
+import Chat from "@/utilities/Ai/Chat"
 export default function Page({params}) {
   const [activeTab, setActiveTab] = useState("create")
+  const [aiopen,setaiopen] = useState(false)
   return (
     <div className="w-full min-h-screen bg-background text-foreground">
       <div className="container mx-auto px-4 md:px-6 py-8">
@@ -284,6 +285,32 @@ export default function Page({params}) {
           </Card>
         )}
       </div>
+      <Button className="flex items-center gap-2 fixed lg:bottom-6 lg:right-6 md:bottom-4 md:right-4 bottom-2 right-2 rounded-full lg:py-8 md:py-8 py-8" size="lg" onClick={()=>{
+      setaiopen(!aiopen)
+    }}>
+      <MessageCircleIcon className="h-5 w-5" />
+      Chat with AI
+    </Button>
+   
+<Chat aiopen={aiopen} setaiopen={setaiopen}/>
     </div>
+  )
+}
+function MessageCircleIcon(props) {
+  return (
+    <svg
+      {...props}
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z" />
+    </svg>
   )
 }

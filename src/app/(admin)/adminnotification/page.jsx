@@ -10,9 +10,10 @@ import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select"
 import { Button } from "@/components/ui/button"
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table"
-
+import Chat from "@/utilities/Ai/Chat"
 export default function Page() {
   const [activeTab, setActiveTab] = useState("sent")
+  const [aiopen,setaiopen] = useState(false)
   return (
     <section className="w-full max-w-4xl mx-auto py-12 md:py-16 lg:py-20">
       <div className="px-4 md:px-6">
@@ -111,6 +112,32 @@ export default function Page() {
           </TabsContent>
         </Tabs>
       </div>
+      <Button className="flex items-center gap-2 fixed lg:bottom-4 lg:right-4 md:bottom-4 md:right-4 bottom-2 right-2 rounded-full lg:py-8 md:py-8 py-8 " size="lg" onClick={()=>{
+      setaiopen(!aiopen)
+    }}>
+      <MessageCircleIcon className="h-5 w-5" />
+      Chat with AI
+    </Button>
+   
+<Chat aiopen={aiopen} setaiopen={setaiopen}/>
     </section>
+  )
+}
+function MessageCircleIcon(props) {
+  return (
+    <svg
+      {...props}
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z" />
+    </svg>
   )
 }

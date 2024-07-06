@@ -12,6 +12,7 @@ const Page = () => {
     const [coursesData,setCoursesData] = useState(null)
     const [loading,setLoading] = useState(false)
     const [isansession,setisansession]=useState(false);
+ 
     //fetching all courses
     const fetchallCourse = async()=>{
     setLoading(true)
