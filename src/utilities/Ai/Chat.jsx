@@ -19,7 +19,7 @@ const Chat = ({aiopen,setaiopen}) => {
     console.log(aiopen)
   return (
     <>
-     <Sheet open={aiopen} >
+     <Sheet open={aiopen} variants="bottom">
   <SheetContent className="w-full h-full">
     <div className="absolute right-[13px] top-[10px] cursor-pointer" onClick={()=>{
       setaiopen(!aiopen)

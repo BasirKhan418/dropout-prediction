@@ -236,7 +236,7 @@ toast.error("Something went wrong! try again later"+err)
   return (
     <>
      <Toaster position="top-center" expand={false}/>
-   { loading?<ProfielSpinner/>:<>
+   { loading?<div className="flex justify-center items-center h-full w-full"><ProfielSpinner/></div>:<>
    
     <div className="mx-4 my-2 ">
     <Card className="w-full max-w-2xl lg:max-w-4xl">
@@ -445,6 +445,44 @@ toast.error("Something went wrong! try again later"+err)
               placeholder="This is the first week of the course"
             />
           </div>
+       {  createcontentform.type=="video"&& <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="slide" className="text-right">
+              Slide Link
+            </Label>
+            <Input
+              id="slide"
+              onChange={handlecreatecontentformchnage}
+              value={createcontentform.slide}
+              className="col-span-3"
+              placeholder="https://www.google.com/slides"
+            />
+          </div>}
+          {  createcontentform.type=="meeting"&& <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="date" className="text-right">
+              Date
+            </Label>
+            <input
+              id="date"
+              type="date"
+              onChange={handlecreatecontentformchnage}
+              value={createcontentform.date}
+             className="col-span-3 border-2 shadow-sm rounded-md px-2 py-1"
+              placeholder="24/05/2024"
+            />
+          </div>}
+          {  createcontentform.type=="meeting"&& <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="time" className="text-right">
+              Time
+            </Label>
+            <input
+              id="time"
+              type="time"
+              onChange={handlecreatecontentformchnage}
+              value={createcontentform.time}
+              className="col-span-3 border-2 shadow-sm rounded-md px-2 py-1"
+              placeholder="12:00"
+            />
+          </div>}
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="link" className="text-right">
               Link

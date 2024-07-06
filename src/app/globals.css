@@ -50,3 +50,6 @@
   }
 }
 /* VIDEO CSS */
+html{
+  scroll-behavior: smooth;
+}
