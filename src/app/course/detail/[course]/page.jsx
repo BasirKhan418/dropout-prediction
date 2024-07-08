@@ -8,7 +8,7 @@ const Page = ({params}) => {
   const [loading, setLoading] = useState(false)
   const [weeksdata, setWeeksdata] = useState([]);
   const [alldata, setAlldata] = useState([])
-  const [allcoursedata, setallCoursetdata] = useState([])
+  const [allcoursedata, setallCoursetdata] = useState([]);
   const fetchallcoursedata = async()=>{
     try{
       setLoading(true)
@@ -42,7 +42,7 @@ setAllcourseData()
   return (
     <div>
       <Toaster position='top-center' expand={false} />
-       {loading?<HomePageSkl/> :<CourseSidebar weeksdata={weeksdata} alldata={alldata} allcoursedata={allcoursedata}/>}
+       {loading?<HomePageSkl/> :<CourseSidebar weeksdata={weeksdata} alldata={alldata} allcoursedata={allcoursedata} />}
     </div>
   )
 }

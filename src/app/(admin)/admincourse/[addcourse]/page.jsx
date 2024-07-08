@@ -45,6 +45,8 @@ import {
 import ProfielSpinner from "@/utilities/Spinner/ProfielSpinner"
 import { set } from "mongoose"
 export default function Component({params}) {
+  //name
+  const [courseName,setCourseName] = useState("")
   //useEffect
   const fetchallcoursedata = async()=>{
 try{
@@ -60,6 +62,7 @@ const result = await res.json()
 setLoading(false)
 console.log(result)
 setWeeks(result.data.content)
+setCourseName(result.data.title)
 toast.success(result.message)
 }
 catch(err){
@@ -240,6 +243,29 @@ const handleSubmit = async()=>{
 toast.error("Something went wrong! try again later"+err)
   }
 }
+//upload content on database
+const updateondatabase = async(videoid,playbackid)=>{
+ let data = {name:courseName,folderid:params.addcourse,content:{title:createcontentform.name,videoid,playbackid,description:createcontentform.description}}
+ console.log(data)
+const res = await fetch("/api/addvideos",{
+  method:"POST",
+  headers:{
+      "Content-Type":"application/json",
+      "token":localStorage.getItem("dilmsadmintoken")
+  },
+  body:JSON.stringify(data)
+})
+const result = await res.json();
+console.log(result)
+if(result.success){
+  toast.success(result.message)
+     
+}
+else{
+  toast.error(result.message)
+  
+}
+}
 //upload content //
 //handle video change
 const handleVideoChange = (e)=>{
@@ -249,6 +275,10 @@ const handleVideoChange = (e)=>{
 const uploadvideo = async()=>{
   if(video==""){
     toast.error("Please select a video to upload")
+    return
+  }
+  if(createcontentform.name=="",createcontentform.type=="",createcontentform.description==""){
+    toast.error("Please fill all the fields")
     return
   }
   try {
@@ -313,6 +343,7 @@ const uploadvideo = async()=>{
         },
       }
     );
+      updateondatabase(assetdetails.data.data.id,assetdetails.data.data.playback_ids[0].id);
       setPlaybackid(assetdetails.data.data.playback_ids[0].id)
       setVideoId(assetdetails.data.data.id)
       setcreatecontentform({...createcontentform,videoid:assetdetails.data.data.id,playbackid:assetdetails.data.data.playback_ids[0].id})
@@ -622,6 +653,18 @@ const uploadvideo = async()=>{
               value={createcontentform.videoid}
               className="col-span-3"
               placeholder=""
+            />
+          </div>}
+          { createcontentform.type=="video"&&<div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="poster" className="text-right">
+              Thumbnail/Poster
+            </Label>
+            <Input
+              id="poster"
+              onChange={handlecreatecontentformchnage}
+              value={createcontentform.poster}
+              className="col-span-3"
+              placeholder="Enter Your Thumbnail Link Here..."
             />
           </div>}
           { createcontentform.type=="video"&&<div className="grid grid-cols-4 items-center gap-4">

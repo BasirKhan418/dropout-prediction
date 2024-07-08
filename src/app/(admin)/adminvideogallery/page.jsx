@@ -8,6 +8,7 @@ import {
     DialogTitle,
     DialogTrigger,
   } from "@/components/ui/dialog"
+  import MuxPlayer from '@mux/mux-player-react';
 import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@/components/ui/collapsible"
@@ -26,6 +27,8 @@ export default function Component() {
   const [uploadModal, setUploadModal] = useState(false)
   const [videodata,setVideoData] = useState([])
   const [loading,setLoading] = useState(false)
+  const [previewModal, setPreviewModal] = useState(false)
+  const [previewVideo, setPreviewVideo] = useState(null)
   //fetch all course data
   const fethcourseData = async()=>{
     let res = await CourseData();
@@ -259,7 +262,10 @@ export default function Component() {
             {videodata&&videodata.map((item)=>(<div
              
               className="relative group overflow-hidden rounded-lg cursor-pointer"
-              
+              onClick={()=>{
+                setPreviewModal(true)
+                setPreviewVideo(item)
+              }}
             >
               <img
                 src={`https://image.mux.com/${item.playbackid}/thumbnail.png?width=214&height=121&time=2&fit_mode=preserve`}
@@ -332,6 +338,52 @@ export default function Component() {
       
     </div>
     </>}
+    {/* preview video */}
+    <Dialog open={previewModal}>
+      <DialogContent className="sm:max-w-[700px] p-0">
+        <div className="flex flex-col h-full">
+          <div className="flex-1 overflow-hidden rounded-t-xl">
+          <MuxPlayer
+  streamType="on-demand"
+  playbackId={previewModal&&previewVideo.playbackid}
+  metadataVideoTitle={previewModal&&previewVideo.title}
+  metadataViewerUserId={previewModal&&previewVideo.description}
+  poster={`https://image.mux.com/${previewModal&&previewVideo.playbackid}/thumbnail.png?width=214&height=121&time=2&fit_mode=preserve`}
+  primaryColor="#FFFFFF"
+  secondaryColor="#000000"
+/>
+          </div>
+          <div className="bg-background px-6 py-8 rounded-b-xl">
+            <div className="grid gap-4">
+              <div>
+                <h1 className="text-2xl font-bold">{previewModal&&previewVideo.title}</h1>
+                <p className="text-muted-foreground">
+                 {previewModal&&previewVideo.description}
+                </p>
+              </div>
+              <div className="grid grid-cols-1 gap-4">
+                <div>
+                  <div className="text-sm font-medium text-muted-foreground">Video ID</div>
+                  <div>{previewModal&&previewVideo.videoid}</div>
+                </div>
+                <div>
+                  <div className="text-sm font-medium text-muted-foreground">Playback ID</div>
+                  <div>{previewModal&&previewVideo.playbackid}</div>
+                </div>
+              </div>
+            </div>
+            
+          </div>
+       
+          <Button variant="" onClick={()=>{
+            setPreviewModal(false)
+            setPreviewVideo(null)
+          }} className="" type="button">
+                  Cancel
+                </Button>
+        </div>
+      </DialogContent>
+    </Dialog>
     </>
     
   )

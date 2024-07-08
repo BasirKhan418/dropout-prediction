@@ -5,17 +5,79 @@ import { Textarea } from "@/components/ui/textarea"
 import {FileText} from "lucide-react"
 import { AiTwotoneLike,AiTwotoneDislike ,AiFillLike,AiFillDislike } from "react-icons/ai";
 import MuxPlayer from '@mux/mux-player-react';
-export default function VideoContent({content,allcoursedata}) {
+import { useEffect, useState } from "react"
+import useAuth from "../../../hooks/useAuth"
+import { Toaster,toast } from "sonner"
+export default function VideoContent({content,allcoursedata,allComment,setAllComment}) {
+  const [like,setLike] = useState(false)
+  const [dislike,setDislike] = useState(false)
+  const [data] = useAuth();
+  const [description,setDescription] = useState("")
+  const handleChange = (e)=>{
+    setDescription(e.target.value)
+  }
+//handle submit
+const handleCommentSubmit = async()=>{
+  let commentdata = {name:content.name,comment:{name:data[0].name,comment:description,date:new Date()}}
+  const res = await fetch("/api/comment",{
+    method:"POST",
+    headers:{
+      "Content-Type":"application/json",
+      "token":localStorage.getItem("dilmstoken")
+    },
+    body:JSON.stringify(commentdata)
+  })
+  const result = await res.json();
+  if(result.success){
+    setDescription("")
+    toast.success(result.message)
+    if(result.data&&result.data.comment!=null){
+    setAllComment(result.data.comment)
+    }
+  }
+  else{
+    toast.error(result.message)
+  }
+}
+
+  const handleLikeClick = () => {
+    if (like) {
+      setLike(false);
+    } else {
+      setLike(true);
+      setDislike(false);
+    }
+  };
+
+  const handleDislikeClick = () => {
+    if (dislike) {
+      setDislike(false);
+    } else {
+      setDislike(true);
+      setLike(false);
+    }
+  };
+  //calculate difference
+  const getTimeAgo = (date) => {
+    const diff = Date.now() - new Date(date).getTime();
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    return days >= 1 ? `${days} days ago` : 'less than 24 hours ago';
+};
+
   return (
+    <>
+    <Toaster position='top-center' expand={false} />
     <div className="grid grid-cols-1 md:grid-cols-[2fr_1fr] gap-6">
+      
     <div className="flex flex-col gap-6">
       <div className="rounded-lg overflow-hidden aspect-video w-full">
       <MuxPlayer
   streamType="on-demand"
   playbackId={content&&content.playbackid}
-  metadataVideoTitle="Placeholder (optional)"
-  metadataViewerUserId="Placeholder (optional)"
+  metadataVideoTitle={content&&content.name}
+  metadataViewerUserId={content&&content.description}
   primaryColor="#FFFFFF"
+  poster={content&&content.poster}
   secondaryColor="#000000"
 />
       </div>
@@ -28,12 +90,12 @@ export default function VideoContent({content,allcoursedata}) {
             </p>
           </div>
           <div className="flex items-center gap-4">
-            <Button variant="ghost" size="icon">
-              <AiTwotoneLike className="w-6 h-6" />
-            </Button>
-            <Button variant="ghost" size="icon">
-              <AiTwotoneDislike className="w-6 h-6" />
-            </Button>
+          <Button variant="ghost" size="icon" onClick={handleLikeClick}>
+        {like ? <AiFillLike className="w-6 h-6" /> : <AiTwotoneLike className="w-6 h-6" />}
+      </Button>
+      <Button variant="ghost" size="icon" onClick={handleDislikeClick}>
+        {dislike ? <AiFillDislike className="w-6 h-6" /> : <AiTwotoneDislike className="w-6 h-6" />}
+      </Button>
             <Link href={content.videonotes} target="_blank">
             <Button variant="ghost" size="icon">
               <FileText className="w-5 h-5" />
@@ -50,46 +112,38 @@ export default function VideoContent({content,allcoursedata}) {
           <div className="flex gap-4">
             <Avatar className="w-10 h-10 border">
               <AvatarImage src="/placeholder-user.jpg" />
-              <AvatarFallback>AC</AvatarFallback>
+              <AvatarFallback>{data&&data[0].name[0]}</AvatarFallback>
             </Avatar>
             <div className="flex-1">
-              <Textarea placeholder="Write your comment..." className="resize-none" />
-              <div className="flex justify-end mt-2">
-                <Button size="sm">Post</Button>
-              </div>
-            </div>
+  <Textarea 
+    placeholder="Write your comment..." 
+    className="resize-none h-32 w-full" // Increase height and set width to full
+    onChange={handleChange} 
+    value={description}
+  />
+  <div className="flex justify-end mt-2">
+    <Button size="" onClick={handleCommentSubmit}>Post</Button>
+  </div>
+</div>
+
           </div>
           <div className="flex flex-col gap-4">
-            <div className="flex items-start gap-4">
+          
+          {allComment&&allComment.slice(0).reverse().map((item,index)=>(<div className="flex items-start gap-4 py-4 shadow px-4 rounded" key={index}>
               <Avatar className="w-10 h-10 border">
                 <AvatarImage src="/placeholder-user.jpg" />
-                <AvatarFallback>AC</AvatarFallback>
+                <AvatarFallback>{item.name[0].toUpperCase()}</AvatarFallback>
               </Avatar>
               <div className="flex-1">
                 <div className="flex items-center justify-between">
-                  <div className="font-medium">John Doe</div>
-                  <div className="text-xs text-muted-foreground">2 days ago</div>
+                  <div className="font-medium">{item.name}</div>
+                  <div className="text-xs text-muted-foreground">{getTimeAgo(item.date)}</div>
                 </div>
                 <p className="text-muted-foreground">
-                  This is a great introduction to React. I learned a lot from this video.
+                  {item.comment}
                 </p>
               </div>
-            </div>
-            <div className="flex items-start gap-4">
-              <Avatar className="w-10 h-10 border">
-                <AvatarImage src="/placeholder-user.jpg" />
-                <AvatarFallback>AC</AvatarFallback>
-              </Avatar>
-              <div className="flex-1">
-                <div className="flex items-center justify-between">
-                  <div className="font-medium">Jane Smith</div>
-                  <div className="text-xs text-muted-foreground">1 week ago</div>
-                </div>
-                <p className="text-muted-foreground">
-                  I really enjoyed this video. The explanations were clear and concise.
-                </p>
-              </div>
-            </div>
+            </div>))}
           </div>
         </div>
       </div>
@@ -133,7 +187,7 @@ export default function VideoContent({content,allcoursedata}) {
       </div>
     </div>
   </div>
-  
+  </>
   )
 }
 

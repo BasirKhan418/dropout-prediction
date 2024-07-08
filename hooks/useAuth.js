@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react'
 const useAuth = () => {
  const [data,setData] = useState(null);
  const [loading,setLoading] = useState(false);
+
  const validatefun = async()=>{
     try{
         setLoading(true);
@@ -17,6 +18,7 @@ const useAuth = () => {
          setLoading(false);
        if(res.success){
        setData(res.data);
+      
        }
        else{
          setData(null)

@@ -23,8 +23,29 @@ export default function CourseSidebar({weeksdata,alldata,allcoursedata}) {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isopen,setIsopen] = useState(true);
   const [menuWeek, setMenuWeek] = useState("")
+  const [allComment,setAllComment] = useState([])
   console.log(content)
-  
+  const fetchallComment= async(id)=>{
+setAllComment([])
+    const res = await fetch(`/api/comment?id=${id}`,{
+      method:"GET",
+      headers:{
+        "Content-Type":"application/json",
+        "token":localStorage.getItem("dilmstoken")
+      },
+    })
+    const result = await res.json();
+    if(result.success){
+      if(result.data&&result.data.comment!=null){
+        setAllComment(result.data.comment)
+      }
+      
+    }
+    else{
+      toast.error(result.message)
+    }
+  }
+
   return (
     <div className=" h-[100vh] w-full flex-col  ">
        <header className="lg:fixed lg:top-0 lg:left-0 w-full bg-white dark:bg-gray-900 p-3 md:p-4 flex flex-col md:flex-row justify-between items-center shadow h-20 z-20 md:fixed md:top-0 md:left-0">
@@ -126,6 +147,7 @@ export default function CourseSidebar({weeksdata,alldata,allcoursedata}) {
                       setActiveFolder("video")
                       setActivemenu(item.name)
                       setContent(item)
+                      fetchallComment(item.name)
                     }}
                     prefetch={false}
                   >
@@ -299,7 +321,7 @@ export default function CourseSidebar({weeksdata,alldata,allcoursedata}) {
           {activeFolder === "video" && (
            <>
              <div className={`${isopen?"sm:absolute sm:left-80":""} `}>
-              <VideoContent content={content} allcoursedata={allcoursedata}/>
+              <VideoContent content={content} allcoursedata={allcoursedata} allComment={allComment} setAllComment={setAllComment}/>
              </div>
            </>
           )}
