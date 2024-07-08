@@ -5,6 +5,7 @@ import { Sheet, SheetTrigger, SheetContent } from "@/components/ui/sheet"
 import { MdOutlineAssignmentTurnedIn } from "react-icons/md";
 import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuItem } from "@/components/ui/dropdown-menu"
+import { MdOutlineOndemandVideo } from "react-icons/md";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card"
 import { MdNavigateNext } from "react-icons/md";
 import { AiOutlineNotification } from "react-icons/ai";
@@ -74,13 +75,14 @@ export default function AdminSidebar({children}) {
             <AiOutlineNotification className="h-5 w-5" />
             <span>Send Notification</span>
           </Link>
+          
           <Link
-            href="/admininstructor"
+            href="/adminvideogallery"
             className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium hover:bg-muted"
             prefetch={false}
           >
-            <UsersIcon className="h-5 w-5" />
-            <span>Instructor</span>
+            <MdOutlineOndemandVideo className="h-5 w-5" />
+            <span>Video Gallery</span>
           </Link>
         </nav>
       </aside>
@@ -140,12 +142,12 @@ export default function AdminSidebar({children}) {
             <span>Projects</span>
           </Link>
           <Link
-            href="/admininstructor"
+            href="/adminvideogallery"
             className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium hover:bg-muted"
             prefetch={false}
           >
-            <UsersIcon className="h-5 w-5" />
-            <span>Instructor</span>
+            <MdOutlineOndemandVideo className="h-5 w-5" />
+            <span>Video Gallery</span>
           </Link>
                   <Link
                     href="#"

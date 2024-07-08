@@ -7,7 +7,9 @@ import { Toaster,toast } from 'sonner'
 import { CourseData } from '../../../../functions/Coursedata'
 import Link from 'next/link'
 import Card from '@/utilities/Course/Card'
+import { useRouter } from 'next/navigation'
 const Page = () => {
+    const router = useRouter();
     const [data,setData] = useState(null)
     const [coursesData,setCoursesData] = useState(null)
     const [loading,setLoading] = useState(false)

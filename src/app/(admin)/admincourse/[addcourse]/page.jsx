@@ -9,7 +9,9 @@ import { useEffect, useState } from "react"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Toaster,toast } from "sonner"
+import UploadModal from "@/utilities/Course/UploadModal"
 import Chat from "@/utilities/Ai/Chat"
+import axios from "axios"
 import {
   Dialog,
   DialogContent,
@@ -79,6 +81,9 @@ fetchallcoursedata()
   const [weekindex,setweekindex] = useState("")
   const [update,setupdate] = useState(false)
   const [createcontentbool,setcreatecontentbool] = useState(false)
+  const [videoId, setVideoId] = useState('')
+  const [playbackid, setPlaybackid] = useState('')
+  const [uploadProgress, setUploadProgress] = useState(0)
   const [createcontentform,setcreatecontentform] = useState({
     name:"",
     description:"",
@@ -86,12 +91,14 @@ fetchallcoursedata()
     type:"",
     comment:[]
   })
+  const [uploadModal,setUploadModal] = useState(false)
   const [createweekform,setcreateweekform] = useState({
     name:"",
     type:"",
     description:"",
     content:[]
   })
+  const [video,setVideo] = useState("");
 //handlechanges
 const handlecreateformchnage = (e)=>{
   setcreateweekform({...createweekform,[e.target.id]:e.target.value})
@@ -233,6 +240,86 @@ const handleSubmit = async()=>{
 toast.error("Something went wrong! try again later"+err)
   }
 }
+//upload content //
+//handle video change
+const handleVideoChange = (e)=>{
+  setVideo(e.target.files[0])
+}
+//upload video
+const uploadvideo = async()=>{
+  if(video==""){
+    toast.error("Please select a video to upload")
+    return
+  }
+  try {
+    const upload = await axios.post(
+      'https://api.mux.com/video/v1/uploads',
+      {
+        "new_asset_settings": {
+    "playback_policy": [
+      "public"
+    ],
+    "max_resolution_tier": "1080p",
+    "encoding_tier": "baseline"
+  },
+  "cors_origin": "*"
+      },
+      {
+        auth: {
+          username: process.env.NEXT_PUBLIC_MUX_TOKEN_ID,
+          password: process.env.NEXT_PUBLIC_MUX_TOKEN_SECRET,
+        },
+      }
+    );
+
+    const uploadUrl = upload.data.data.url;
+    setUploadModal(true)
+    const uploadVideo = await axios.put(uploadUrl, video, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+      onUploadProgress: (progressEvent) => {
+        const { loaded, total } = progressEvent;
+        const percentCompleted = Math.floor((loaded * 100) / total);
+        setUploadProgress(percentCompleted);
+        console.log('Upload progress:', percentCompleted);
+      },
+      
+    });
+   
+    console.log('upload data asset:',upload)
+     console.log('Video uploaded asset:', uploadVideo);
+
+    const assetId = upload.data.data.id;
+    console.log('Asset ID:', assetId);
+    const asset = await axios.get(
+      `https://api.mux.com/video/v1//uploads/${assetId}`,
+      {
+        auth: {
+          username: process.env.NEXT_PUBLIC_MUX_TOKEN_ID,
+          password: process.env.NEXT_PUBLIC_MUX_TOKEN_SECRET,
+        },
+      }
+    );
+    console.log("assest is upload  asset",asset)
+
+    setVideoId(asset.data.asset_id);
+    const assetdetails = await axios.get(
+      `https://api.mux.com/video/v1//assets/${asset.data.data.asset_id}`,
+      {
+        auth: {
+          username: process.env.NEXT_PUBLIC_MUX_TOKEN_ID,
+          password: process.env.NEXT_PUBLIC_MUX_TOKEN_SECRET,
+        },
+      }
+    );
+      setPlaybackid(assetdetails.data.data.playback_ids[0].id)
+      setVideoId(assetdetails.data.data.id)
+      setcreatecontentform({...createcontentform,videoid:assetdetails.data.data.id,playbackid:assetdetails.data.data.playback_ids[0].id})
+  } catch (error) {
+   toast.error("Something went wrong! try again later"+error)
+  }
+};
   return (
     <>
      <Toaster position="top-center" expand={false}/>
@@ -457,6 +544,24 @@ toast.error("Something went wrong! try again later"+err)
               placeholder="https://www.google.com/slides"
             />
           </div>}
+          {  createcontentform.type=="video"&& <div className="grid grid-cols-4 items-center gap-4 relative">
+            <Label htmlFor="slide" className="text-right">
+              Upload Video
+            </Label>
+            
+            <Input
+              id="video"
+              onChange={handleVideoChange}
+              type="file"
+              className="col-span-3"
+            />
+            <div className="flex justify-center items-center absolute right-0">
+            <Button onClick={uploadvideo}>
+              Upload
+            </Button>
+            </div>
+          
+          </div>}
           {  createcontentform.type=="meeting"&& <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="date" className="text-right">
               Date
@@ -483,7 +588,7 @@ toast.error("Something went wrong! try again later"+err)
               placeholder="12:00"
             />
           </div>}
-          <div className="grid grid-cols-4 items-center gap-4">
+         { createcontentform.type!="video"&&<div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="link" className="text-right">
               Link
             </Label>
@@ -494,7 +599,43 @@ toast.error("Something went wrong! try again later"+err)
               className="col-span-3"
               placeholder="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
             />
-          </div>
+          </div>}
+          { createcontentform.type=="video"&&<div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="playbackid" className="text-right">
+              PlayBack Id
+            </Label>
+            <Input
+              id="playbackid"
+              onChange={handlecreatecontentformchnage}
+              value={createcontentform.playbackid}
+              className="col-span-3"
+              placeholder=""
+            />
+          </div>}
+          { createcontentform.type=="video"&&<div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="link" className="text-right">
+              Video Id
+            </Label>
+            <Input
+              id="videoid"
+              onChange={handlecreatecontentformchnage}
+              value={createcontentform.videoid}
+              className="col-span-3"
+              placeholder=""
+            />
+          </div>}
+          { createcontentform.type=="video"&&<div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="videonotes" className="text-right">
+              Video Notes
+            </Label>
+            <Input
+              id="videonotes"
+              onChange={handlecreatecontentformchnage}
+              value={createcontentform.videonotes}
+              className="col-span-3"
+              placeholder="Add Note Link Here..."
+            />
+          </div>}
         </div>
         <DialogFooter>
          {!update&& <Button onClick={handlecreatecontentsubmit}>Save changes</Button>}
@@ -536,6 +677,7 @@ toast.error("Something went wrong! try again later"+err)
 </AlertDialog>
 
     </>}
+    <UploadModal open={uploadModal} setOpen={setUploadModal} progress={uploadProgress}/>
     </>
   )
 }

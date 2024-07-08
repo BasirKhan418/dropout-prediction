@@ -11,7 +11,7 @@ const CourseData = async()=>{
       return res;
     }
     catch(err){
-        retutn [{message:"Something went wrong!",success:false}]
+        return [{message:"Something went wrong!",success:false}]
     }
 }
 export {CourseData}

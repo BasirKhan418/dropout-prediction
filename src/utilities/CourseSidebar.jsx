@@ -15,8 +15,8 @@ import { FaFolder } from "react-icons/fa";
 import { Badge } from "@/components/ui/badge"
 
 import {ClipboardList,FolderGit2,TvMinimalPlay,X,BookCheck,NotebookPen,Video} from "lucide-react"
-import { set } from "mongoose"
-export default function CourseSidebar({weeksdata,alldata}) {
+import VideoContent from "./Course/Video"
+export default function CourseSidebar({weeksdata,alldata,allcoursedata}) {
   const [activeFolder, setActiveFolder] = useState("overview")
   const [activemenu,setActivemenu] = useState("")
   const [content,setContent] = useState([])
@@ -24,9 +24,10 @@ export default function CourseSidebar({weeksdata,alldata}) {
   const [isopen,setIsopen] = useState(true);
   const [menuWeek, setMenuWeek] = useState("")
   console.log(content)
+  
   return (
     <div className=" h-[100vh] w-full flex-col  ">
-       <header className="fixed top-0 left-0 w-full bg-white dark:bg-gray-900 p-3 md:p-4 flex flex-col md:flex-row justify-between items-center shadow h-20 z-20">
+       <header className="lg:fixed lg:top-0 lg:left-0 w-full bg-white dark:bg-gray-900 p-3 md:p-4 flex flex-col md:flex-row justify-between items-center shadow h-20 z-20 md:fixed md:top-0 md:left-0">
             
             <div className="flex items-center mb-2 md:mb-0">
            { !isopen&&<div className="mx-4">
@@ -222,11 +223,11 @@ export default function CourseSidebar({weeksdata,alldata}) {
           
           </Accordion>
         </div>
-        <div className="flex-1 p-8">
+        <div className="flex-1 px-8 mt-8">
           {activeFolder === "overview" && (
             <div className={`${isopen?"sm:absolute sm:left-80":""} `}>
               <div className="flex flex-col">
-      <section className="bg-white py-12  ">
+      <section className="bg-white lg:py-12  ">
         <div className="container mx-auto px-4 md:px-6 lg:px-8 grid md:grid-cols-2 gap-8 items-center">
           <div className="text-center md:text-left">
             <h1 className="text-4xl font-bold text-black md:text-5xl lg:text-5xl">
@@ -241,14 +242,15 @@ export default function CourseSidebar({weeksdata,alldata}) {
             </p>
             <div className="mt-8">
               <button
-                className="inline-flex items-center justify-center rounded-md bg-primary px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-primary/90 focus:outline-none focus:ring-1 focus:ring-primary focus:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
-                onClick={()=>{setMenuWeek(weeksdata[0].name)}}
+                className="inline-flex items-center justify-center rounded-md bg-primary px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-primary/90 focus:outline-none focus:ring-1 focus:ring-primary focus:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 my-2"
+                onClick={()=>{setMenuWeek(weeksdata[0].name) 
+                  setIsopen(true)}}
               >
                 Get Started
               </button>
               <Link
                 href="#coursecontent"
-                className="inline-flex items-center justify-center rounded-md bg-primary px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-primary/90 focus:outline-none focus:ring-1 focus:ring-primary focus:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 mx-6"
+                className="inline-flex items-center justify-center rounded-md bg-primary px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-primary/90 focus:outline-none focus:ring-1 focus:ring-primary focus:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 mx-6 my-2"
                 prefetch={false}
               >
                 Course Content
@@ -272,6 +274,7 @@ export default function CourseSidebar({weeksdata,alldata}) {
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {weeksdata&&weeksdata.map((item,index)=>(<div className="rounded-lg bg-card p-4 shadow transition-all hover:scale-105" key={index} onClick={()=>{
               setMenuWeek(item.name)
+              setIsopen(true)
             }}>
               <img
                 src="/course/folderimg.jpg"
@@ -296,7 +299,7 @@ export default function CourseSidebar({weeksdata,alldata}) {
           {activeFolder === "video" && (
            <>
              <div className={`${isopen?"sm:absolute sm:left-80":""} `}>
-              {content.name}: {content.type} : {content.link}
+              <VideoContent content={content} allcoursedata={allcoursedata}/>
              </div>
            </>
           )}
