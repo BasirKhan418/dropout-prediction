@@ -1,8 +1,6 @@
 
 "use client"
-
 import { useEffect, useState } from "react"
-import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion"
@@ -12,11 +10,15 @@ import { IoMdArrowRoundBack } from "react-icons/io";
 import { IoVideocamOutline } from "react-icons/io5";
 import { MdOutlineAssignmentTurnedIn } from "react-icons/md";
 import { FaFolder } from "react-icons/fa";
+import { IoCheckmarkDoneCircleSharp } from "react-icons/io5";
+import Link from "next/link"
 import { Badge } from "@/components/ui/badge"
-
+import { useRouter } from "next/navigation"
 import {ClipboardList,FolderGit2,TvMinimalPlay,X,BookCheck,NotebookPen,Video} from "lucide-react"
 import VideoContent from "./Course/Video"
-export default function CourseSidebar({weeksdata,alldata,allcoursedata}) {
+import { Toaster,toast } from "sonner"
+export default function CourseSidebar({weeksdata,alldata,allcoursedata,crid}) {
+  const router = useRouter()
   const [activeFolder, setActiveFolder] = useState("overview")
   const [activemenu,setActivemenu] = useState("")
   const [content,setContent] = useState([])
@@ -24,7 +26,43 @@ export default function CourseSidebar({weeksdata,alldata,allcoursedata}) {
   const [isopen,setIsopen] = useState(true);
   const [menuWeek, setMenuWeek] = useState("")
   const [allComment,setAllComment] = useState([])
-  console.log(content)
+  const [currentWeekindex,setCurrentWeekindex] = useState(0)
+  const [currentContentindex,setCurrentContentindex] = useState(-1)
+  const [userdata,setUserdata] = useState(null)
+  //authentication
+const validatefun = async()=>{
+  try{
+      const response = await fetch("/api/homeauth",{
+       method:"POST",
+       headers:{
+         "content-type":"application/json",
+         "token":localStorage.getItem("dilmstoken")
+       }
+      })
+     const res = await response.json();
+     if(res.success){
+     setUserdata(res.data);
+     console.log(res.data)
+    
+     }
+     else{
+       setUserdata(null)
+       toast.error(res.message)
+       router.push("/login")
+     }
+  }
+  catch(err){
+    setLoading(false);
+   setUserdata(null)
+   toast.error("Something went wrong! try again later")
+   router.push("/login")
+  }
+
+}
+useEffect(()=>{
+validatefun();
+},[])
+//fetch all comment
   const fetchallComment= async(id)=>{
 setAllComment([])
     const res = await fetch(`/api/comment?id=${id}`,{
@@ -45,9 +83,104 @@ setAllComment([])
       toast.error(result.message)
     }
   }
+  //
+ // get and if possible update progress
+ const UpdateandGetProgress = async()=>{
+  try{
+    const res = await fetch(`/api/progress?id=${userdata[0]._id}&&crid=${crid}`,{
+      method:"GET",
+      headers:{
+        "Content-Type":"application/json",
+        "token":localStorage.getItem("dilmstoken")
+      }
+    })
+    const result = await res.json();
+  }
+  catch(err){
+    console.log(err)
+  }
+}
+//endded
+  const UpdateProgress = async()=>{
+    if(content.name==null){
+      return 
+    }
+  const res = await fetch("/api/progress",{
+    method:"POST",
+    headers:{
+      "Content-Type":"application/json",
+      "token":localStorage.getItem("dilmstoken"),
+    },
+    body:JSON.stringify({id:userdata[0]._id,crid:crid,data:{name:content.name,}})
+  })
+  const result = await res.json();
+  if(result.success){
+    toast.success(result.message)
+    UpdateandGetProgress();
+    validatefun()
+  }
+  else{
+    toast.error(result.message)
+  }
 
+  }
+  const handleNavigationNext = () => {
+    UpdateProgress()
+    if (currentContentindex < weeksdata[currentWeekindex].content.length - 1) {
+      const nextContentIndex = currentContentindex + 1;
+      setCurrentContentindex(nextContentIndex);
+      setMenuWeek(weeksdata[currentWeekindex].name);
+      setContent(weeksdata[currentWeekindex].content[nextContentIndex]);
+      setActivemenu(weeksdata[currentWeekindex].content[nextContentIndex].name);
+      setActiveFolder(weeksdata[currentWeekindex].content[nextContentIndex].type);
+    } else if (currentWeekindex < weeksdata.length - 1) {
+      const nextWeekIndex = currentWeekindex + 1;
+      setCurrentWeekindex(nextWeekIndex);
+      setCurrentContentindex(0);
+      const firstContent = weeksdata[nextWeekIndex].content[0];
+      setContent(firstContent);
+      setMenuWeek(weeksdata[nextWeekIndex].name);
+      setActivemenu(firstContent.name);
+      setActiveFolder(firstContent.type);
+    }
+  };
+  
+
+  //handle Previous
+  const handleNavigationPrevious = () => {
+    if (currentContentindex > 0) {
+      setCurrentContentindex(currentContentindex - 1)
+      setContent(weeksdata[currentWeekindex].content[currentContentindex - 1])
+      setActivemenu(weeksdata[currentWeekindex].content[currentContentindex - 1].name)
+      setActiveFolder(weeksdata[currentWeekindex].content[currentContentindex - 1].type)
+    }
+    else {
+      if (currentWeekindex > 0) {
+        setCurrentWeekindex(currentWeekindex - 1)
+        setCurrentContentindex(weeksdata[currentWeekindex - 1].content.length - 1)
+        setContent(weeksdata[currentWeekindex - 1].content[weeksdata[currentWeekindex - 1].content.length - 1])
+        setMenuWeek(weeksdata[currentWeekindex - 1].name)
+        setActivemenu(weeksdata[currentWeekindex - 1].content[weeksdata[currentWeekindex - 1].content.length - 1].name)
+        setActiveFolder(weeksdata[currentWeekindex - 1].content[weeksdata[currentWeekindex - 1].content.length - 1].type)
+      }
+    }
+  }
+
+  const getContentExistOrNot = (name) => {
+    if (!userdata || !userdata[0] || !userdata[0].crcmp) {
+      return false;
+    }
+  
+    const exists = userdata[0].crcmp.some((item) => item.name === name);
+    return exists;
+  };
+  
   return (
+    <>
+      <Toaster position='top-center' expand={false} />
+    
     <div className=" h-[100vh] w-full flex-col  ">
+    
        <header className="lg:fixed lg:top-0 lg:left-0 w-full bg-white dark:bg-gray-900 p-3 md:p-4 flex flex-col md:flex-row justify-between items-center shadow h-20 z-20 md:fixed md:top-0 md:left-0">
             
             <div className="flex items-center mb-2 md:mb-0">
@@ -64,17 +197,21 @@ setAllComment([])
             </div>
             <h2 className="text-md md:text-lg font-bold text-gray-800 dark:text-gray-400 mb-2 md:mb-0">{alldata.title}</h2>
             <div className="flex space-x-3">
-              <button className="flex items-center bg-blue-600 text-white px-3 py-1.5 rounded-full shadow hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 transition duration-300 ease-in-out">
+              <button className="flex items-center bg-blue-600 text-white px-3 py-1.5 rounded-full shadow hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 transition duration-300 ease-in-out" onClick={
+                handleNavigationPrevious
+              }>
                 <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7"></path>
                 </svg>
                 Previous
               </button>
-              <button className="flex items-center bg-blue-600 text-white px-3 py-1.5 rounded-full shadow hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 transition duration-300 ease-in-out">
+              <button className="flex items-center bg-blue-600 text-white px-3 py-1.5 rounded-full shadow hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 transition duration-300 ease-in-out" onClick={
+                handleNavigationNext
+              }>
                 <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
                 </svg>
-                Next
+                Complete & Next
               </button>
             </div>
           </header>
@@ -118,12 +255,12 @@ setAllComment([])
               
           
             <div className="flex items-center gap-2">
-              <span className="text-sm font-medium">75%</span>
-              <Progress value={75} className="w-32" />
+              <span className="text-sm font-medium">{userdata&&userdata[0].progress}%</span>
+              <Progress value={userdata&&userdata[0].progress} className="w-32" />
             </div>
           </div>
           <Accordion type="single" collapsible value={menuWeek} onValueChange={setMenuWeek}>
-            {weeksdata&&weeksdata.map((item)=>(<AccordionItem value={item.name} >
+            {weeksdata&&weeksdata.map((item,weekindex)=>(<AccordionItem value={item.name} >
               <AccordionTrigger className="flex items-center justify-between" >
                 <div className="flex items-center gap-2">
                   <FolderIcon className="h-5 w-5" />
@@ -135,12 +272,12 @@ setAllComment([])
                 </div>
               </AccordionTrigger>
               <AccordionContent>
-                <div className="grid gap-2 pl-6">
+                <div className="grid gap-2 pl-4">
                   {item.content.map((item,index)=>(<>
                  { item.type=="video"&&<Link
                     href="#"
                     key={index}
-                    className={`flex items-center gap-2 rounded-md px-2 py-1 transition-colors hover:bg-accent hover:text-accent-foreground font-medium ${
+                    className={`cursor-pointer flex items-center gap-2 rounded-md px-2 py-1 transition-colors hover:bg-accent hover:text-accent-foreground font-medium ${
                       activemenu == item.name ? "bg-accent text-accent-foreground" : ""
                     }`}
                     onClick={() => {
@@ -148,89 +285,108 @@ setAllComment([])
                       setActivemenu(item.name)
                       setContent(item)
                       fetchallComment(item.name)
+                      setCurrentWeekindex(weekindex)
+                      setCurrentContentindex(index)
+
                     }}
-                    prefetch={false}
+                   
                   >
+                   { getContentExistOrNot(item.name)&&<IoCheckmarkDoneCircleSharp  className="h-5 w-5 text-primary"/>}
+
                     <Video className="h-5 w-5" />
                     <span>{item.name}</span>
                   </Link>}
                   { item.type=="note"&&<Link
-                    href="#"
+                    href={"#"}
                     key={index}
-                    className={`flex items-center gap-2 rounded-md px-2 py-1 transition-colors hover:bg-accent hover:text-accent-foreground font-medium ${
+                    className={`cursor-pointer flex items-center gap-2 rounded-md px-2 py-1 transition-colors hover:bg-accent hover:text-accent-foreground font-medium ${
                       activemenu === item.name ? "bg-accent text-accent-foreground" : ""
                     }`}
                     onClick={() => {
                       setActiveFolder("note")
                       setActivemenu(item.name)
                       setContent(item)
+                      setCurrentWeekindex(weekindex)
+                      setCurrentContentindex(index)
                     }}
-                    prefetch={false}
                   >
+                    { getContentExistOrNot(item.name)&&<IoCheckmarkDoneCircleSharp  className="h-5 w-5 text-primary"/>}
                     <NotebookPen className="h-5 w-5" />
                     <span>{item.name}</span>
                   </Link>}
                   { item.type=="assignment"&&<Link
-                    href="#"
+                    href={"#"}
                     key={index}
-                    className={`flex items-center gap-2 rounded-md px-2 py-1 transition-colors hover:bg-accent hover:text-accent-foreground font-medium ${
+                    className={`cursor-pointer flex items-center gap-2 rounded-md px-2 py-1 transition-colors hover:bg-accent hover:text-accent-foreground font-medium ${
                       activemenu === item.name ? "bg-accent text-accent-foreground" : ""
                     }`}
                     onClick={() => {
                       setActiveFolder("assignment")
                       setActivemenu(item.name)
                       setContent(item)
+                      setCurrentWeekindex(weekindex)
+                      setCurrentContentindex(index)
                     }}
-                    prefetch={false}
+                    
                   >
+                    { getContentExistOrNot(item.name)&&<IoCheckmarkDoneCircleSharp  className="h-5 w-5 text-primary"/>}
                     <ClipboardList className="h-5 w-5" />
                     <span>{item.name}</span>
                   </Link>}
                   { item.type=="project"&&<Link
-                    href="#"
+                    href={"#"}
                     key={index}
-                    className={`flex items-center gap-2 rounded-md px-2 py-1 transition-colors hover:bg-accent hover:text-accent-foreground font-medium ${
+                    className={`cursor-pointer flex items-center gap-2 rounded-md px-2 py-1 transition-colors hover:bg-accent hover:text-accent-foreground font-medium ${
                       activemenu=== item.name ? "bg-accent text-accent-foreground" : ""
                     }`}
                     onClick={() => {
                       setActiveFolder("project")
                       setActivemenu(item.name)
                       setContent(item)
+                      setCurrentWeekindex(weekindex)
+                      setCurrentContentindex(index)
                     }}
-                    prefetch={false}
+                    
                   >
+                    { getContentExistOrNot(item.name)&&<IoCheckmarkDoneCircleSharp  className="h-5 w-5 text-primary"/>}
                     <FolderGit2 className="h-5 w-5" />
                     <span>{item.name}</span>
                   </Link>}
                   { item.type=="meeting"&&<Link
-                    href="#"
+                    href={"#"}
                     key={index}
-                    className={`flex items-center gap-2 rounded-md px-2 py-1 transition-colors hover:bg-accent hover:text-accent-foreground font-medium ${
+                    className={`cursor-pointer flex items-center gap-2 rounded-md px-2 py-1 transition-colors hover:bg-accent hover:text-accent-foreground font-medium ${
                       activemenu === item.name ? "bg-accent text-accent-foreground" : ""
                     }`}
                     onClick={() => {
                       setActiveFolder("meeting")
                       setActivemenu(item.name)
                       setContent(item)
+                      setCurrentWeekindex(weekindex)
+                      setCurrentContentindex(index)
                     }}
-                    prefetch={false}
+                   
                   >
+                    { getContentExistOrNot(item.name)&&<IoCheckmarkDoneCircleSharp  className="h-5 w-5 text-primary"/>}
                     <TvMinimalPlay className="h-5 w-5" />
                     <span>{item.name}</span>
                   </Link>}
                   { item.type=="test"&&<Link
-                    href="#"
+                  href={"#"}
                     key={index}
-                    className={`flex items-center gap-2 rounded-md px-2 py-1 transition-colors hover:bg-accent hover:text-accent-foreground font-medium ${
+                    className={`cursor-pointer flex items-center gap-2 rounded-md px-2 py-1 transition-colors hover:bg-accent hover:text-accent-foreground font-medium ${
                       activemenu=== item.name ? "bg-accent text-accent-foreground" : ""
                     }`}
                     onClick={() => {
                       setActiveFolder("test")
                       setActivemenu(item.name)
                       setContent(item)
+                      setCurrentWeekindex(weekindex)
+                      setCurrentContentindex(index)
                     }}
-                    prefetch={false}
+                   
                   >
+                    { getContentExistOrNot(item.name)&&<IoCheckmarkDoneCircleSharp  className="h-5 w-5 text-primary"/>}
                     <BookCheck className="h-5 w-5" />
                     <span>{item.name}</span>
                   </Link>}
@@ -270,13 +426,13 @@ setAllComment([])
               >
                 Get Started
               </button>
-              <Link
+              <a
                 href="#coursecontent"
                 className="inline-flex items-center justify-center rounded-md bg-primary px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-primary/90 focus:outline-none focus:ring-1 focus:ring-primary focus:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 mx-6 my-2"
-                prefetch={false}
+                
               >
                 Course Content
-              </Link>
+              </a>
             </div>
           </div>
           <div className="w-full md:max-w-[500px] lg:max-w-[600px] mx-auto ">
@@ -329,7 +485,7 @@ setAllComment([])
            {activeFolder === "assignment" && (
            <>
              <div className={`${isopen?"sm:absolute sm:left-80":""} `}>
-              {content.name}: {content.type} : {content.link}
+              assignment
              </div>
            </>
           )}
@@ -337,7 +493,7 @@ setAllComment([])
           {activeFolder === "note" && (
            <>
              <div className={`${isopen?"sm:absolute sm:left-80":""} `}>
-              {content.name}: {content.type} : {content.link}
+              note
              </div>
            </>
           )}
@@ -345,7 +501,7 @@ setAllComment([])
           {activeFolder === "meeting" && (
            <>
              <div className={`${isopen?"sm:absolute sm:left-80":""} `}>
-              {content.name}: {content.type} : {content.link}
+             meeting
              </div>
            </>
           )}
@@ -353,13 +509,14 @@ setAllComment([])
           {activeFolder === "project" && (
            <>
              <div className={`${isopen?"sm:absolute sm:left-80":""} `}>
-              {content.name}: {content.type} : {content.link}
+              project
              </div>
            </>
           )}
         </div>
       </div>
     </div>
+    </>
   )
 }
 

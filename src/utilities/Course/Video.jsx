@@ -96,13 +96,13 @@ const handleCommentSubmit = async()=>{
       <Button variant="ghost" size="icon" onClick={handleDislikeClick}>
         {dislike ? <AiFillDislike className="w-6 h-6" /> : <AiTwotoneDislike className="w-6 h-6" />}
       </Button>
-            <Link href={content.videonotes} target="_blank">
+            <Link href={`${content.videonotes}`} target="_blank">
             <Button variant="ghost" size="icon">
               <FileText className="w-5 h-5" />
             </Button>
             </Link> 
             
-           <Link href={content.slide} target="_blank"><Button>Slides</Button></Link> 
+           <Link href={`${content.slide}`} target="_blank"><Button>Slides</Button></Link> 
           </div>
         </div>
       </div>
@@ -148,7 +148,7 @@ const handleCommentSubmit = async()=>{
         </div>
       </div>
     </div>
-    <div className="bg-background rounded-lg p-6 shadow">
+    <div className="bg-background rounded-lg p-6 shadow ">
       <div className="flex flex-col gap-4">
         <h2 className="text-xl font-bold">Related Courses</h2>
         <div className="flex flex-col justify-center items-center flex-wrap">

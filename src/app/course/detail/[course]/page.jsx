@@ -31,8 +31,10 @@ const Page = ({params}) => {
       }
       const setAllcourseData = async()=>{
         let res = await CourseData();
-        let all  = res.data.filter((item)=>item._id != params.course)
-        setallCoursetdata(all)
+        if(res.data!=null){
+          let all  = res.data&&res.data.filter((item)=>item._id != params.course)
+          setallCoursetdata(all)
+        }
 
       }
   useEffect(()=>{
@@ -42,7 +44,7 @@ setAllcourseData()
   return (
     <div>
       <Toaster position='top-center' expand={false} />
-       {loading?<HomePageSkl/> :<CourseSidebar weeksdata={weeksdata} alldata={alldata} allcoursedata={allcoursedata} />}
+       {loading?<HomePageSkl/> :<CourseSidebar weeksdata={weeksdata} alldata={alldata} allcoursedata={allcoursedata} crid={params.course}/>}
     </div>
   )
 }
