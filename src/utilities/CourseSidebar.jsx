@@ -17,6 +17,9 @@ import { useRouter } from "next/navigation"
 import {ClipboardList,FolderGit2,TvMinimalPlay,X,BookCheck,NotebookPen,Video} from "lucide-react"
 import VideoContent from "./Course/Video"
 import { Toaster,toast } from "sonner"
+import UserAssignment from "./Assignment/UserAssignment"
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card"
+import PdfViewer from "./Pdf/pdfViewer"
 export default function CourseSidebar({weeksdata,alldata,allcoursedata,crid}) {
   const router = useRouter()
   const [activeFolder, setActiveFolder] = useState("overview")
@@ -174,7 +177,23 @@ setAllComment([])
     const exists = userdata[0].crcmp.some((item) => item.name === name);
     return exists;
   };
-  
+  //
+  const convertTimeTo12HourFormat = (time) => {
+    let [hours, minutes] = time.split(':');
+    let period = 'AM';
+
+    hours = parseInt(hours, 10);
+    if (hours >= 12) {
+      period = 'PM';
+      if (hours > 12) {
+        hours -= 12;
+      }
+    } else if (hours === 0) {
+      hours = 12;
+    }
+
+    return `${hours}:${minutes} ${period}`;
+  };
   return (
     <>
       <Toaster position='top-center' expand={false} />
@@ -485,7 +504,7 @@ setAllComment([])
            {activeFolder === "assignment" && (
            <>
              <div className={`${isopen?"sm:absolute sm:left-80":""} `}>
-              assignment
+              <UserAssignment/>
              </div>
            </>
           )}
@@ -493,7 +512,7 @@ setAllComment([])
           {activeFolder === "note" && (
            <>
              <div className={`${isopen?"sm:absolute sm:left-80":""} `}>
-              note
+              <PdfViewer content={content}/>
              </div>
            </>
           )}
@@ -501,7 +520,36 @@ setAllComment([])
           {activeFolder === "meeting" && (
            <>
              <div className={`${isopen?"sm:absolute sm:left-80":""} `}>
-             meeting
+             <div className="flex flex-col bg-background">
+  <main className="flex-1 py-10 px-6 md:px-10">
+    <div className="flex justify-center items-center h-full w-full">
+      <Card className="bg-card text-card-foreground shadow-sm  ">
+        <CardHeader>
+          <h2 className="text-xl font-bold mb-4">Meeting</h2>
+          <CardTitle>{content.name}</CardTitle>
+          <CardDescription>{content.description}</CardDescription>
+        </CardHeader>
+        <CardContent className="grid gap-4">
+          <div className="flex items-center gap-2">
+            <CalendarIcon className="h-5 w-5 text-muted-foreground" />
+            <p className="text-sm text-muted-foreground">{new Date(content.date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</p>
+          </div>
+          <div className="flex items-center gap-2">
+            <ClockIcon className="h-5 w-5 text-muted-foreground" />
+            <p className="text-sm text-muted-foreground">{convertTimeTo12HourFormat(content.time)} (IST)</p>
+          </div>
+          <Button variant="secondary">
+          <Link href={`${content.link}`} target="_blank" className="flex justify-center items-center">
+            <VideoIcon className="mr-2 h-5 w-5" />
+            Join Meeting
+            </Link>
+          </Button>
+        </CardContent>
+      </Card>
+    </div>
+  </main>
+</div>
+
              </div>
            </>
           )}
@@ -618,6 +666,69 @@ function MountainIcon(props) {
       strokeLinejoin="round"
     >
       <path d="m8 3 4 8 5-5 5 15H2L8 3z" />
+    </svg>
+  )
+}
+function CalendarIcon(props) {
+  return (
+    <svg
+      {...props}
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M8 2v4" />
+      <path d="M16 2v4" />
+      <rect width="18" height="18" x="3" y="4" rx="2" />
+      <path d="M3 10h18" />
+    </svg>
+  )
+}
+
+
+function ClockIcon(props) {
+  return (
+    <svg
+      {...props}
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <circle cx="12" cy="12" r="10" />
+      <polyline points="12 6 12 12 16 14" />
+    </svg>
+  )
+}
+
+
+function VideoIcon(props) {
+  return (
+    <svg
+      {...props}
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="m16 13 5.223 3.482a.5.5 0 0 0 .777-.416V7.87a.5.5 0 0 0-.752-.432L16 10.5" />
+      <rect x="2" y="6" width="14" height="12" rx="2" />
     </svg>
   )
 }
