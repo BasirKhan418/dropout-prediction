@@ -1,116 +1,67 @@
-
+"use client"
 import { Button } from "@/components/ui/button"
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card"
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card"
 import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Badge } from "@/components/ui/badge"
 import Link from "next/link"
-export default function UserAssignment() {
+import { useEffect, useState } from "react"
+import { Toaster,toast } from "sonner"
+import ProfielSpinner from "../Spinner/ProfielSpinner"
+export default function UserAssignment({id}) {
+  const [allAssignments, setAllAssignments] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const fetchAllAssignment = async()=>{
+    setLoading(true)
+    const res = await fetch(`/api/assignment?id=${id}`,{
+      method:"GET",
+      headers:{
+        "Content-Type":"application/json",
+        "token":localStorage.getItem("dilmsadmintoken")
+      }
+    })
+    const data = await res.json()
+    setLoading(false)
+    if(data.success){
+      setAllAssignments(data.data)
+    }
+    else{
+      toast.error(data.message)
+      console.log(data)
+    }
+  }
+  useEffect(()=>{
+    fetchAllAssignment();
+  },[])
+  console.log(allAssignments)
   return (
-    <div className="w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <>
+    <Toaster position="top-center" expand={"false"}/>
+    {loading?<div className="flex justify-center items-center"><ProfielSpinner/></div>:<>
+   <div className="w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold">Assignments</h1>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         <div>
           <h2 className="text-lg font-semibold mb-4">Pending Assignments</h2>
-          <Card className="my-2">
+          {allAssignments&&allAssignments.map((item,index)=>(<Card className="my-2" key={index}>
             <CardHeader>
-              <CardTitle>Intro to React</CardTitle>
-              <CardDescription>Learn the fundamentals of React and build your first app.</CardDescription>
+              <CardTitle>{item.title}</CardTitle>
+              <CardDescription>{item.desc.slice(0,90)+"...."}</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="flex items-center justify-between">
-                <div className="text-sm text-muted-foreground">Due: June 30, 2023</div>
-                <Dialog>
-                  <DialogTrigger asChild>
-                    <Button size="sm">Submit</Button>
-                  </DialogTrigger>
-                 <Link href="/assignment/naldlkdlk"><Button size="sm">View</Button></Link> 
-                  <DialogContent className="sm:max-w-[425px]">
-                    <DialogHeader>
-                      <DialogTitle>Submit Assignment</DialogTitle>
-                      <DialogDescription>Upload your assignment files and click submit.</DialogDescription>
-                    </DialogHeader>
-                    <div className="grid gap-4 py-4">
-                      <div className="grid items-center grid-cols-4 gap-4">
-                        <Label htmlFor="file" className="text-right">
-                          File
-                        </Label>
-                        <Input id="file" type="file" className="col-span-3" />
-                      </div>
-                      <div className="grid items-center grid-cols-4 gap-4">
-                        <Label htmlFor="notes" className="text-right">
-                          Notes
-                        </Label>
-                        <Textarea
-                          id="notes"
-                          rows={3}
-                          className="col-span-3"
-                          placeholder="Add any additional notes..."
-                        />
-                      </div>
-                    </div>
-                    <DialogFooter>
-                      <Button type="submit">Submit</Button>
-                    </DialogFooter>
-                  </DialogContent>
-                </Dialog>
+                <div className="text-sm text-muted-foreground">Due: {new Date(item.duedate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</div>
               </div>
             </CardContent>
-          </Card>
-          <Card className="my-2">
-            <CardHeader>
-              <CardTitle>Advanced CSS Techniques</CardTitle>
-              <CardDescription>Explore advanced CSS concepts and build complex layouts.</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="flex items-center justify-between">
-                <div className="text-sm text-muted-foreground">Due: July 15, 2023</div>
-                <Dialog>
-                  <DialogTrigger asChild>
-            
-
-               
-                    <Button size="sm">Submit</Button>
-                    
-                   
-                  </DialogTrigger>
-                  <Button size="sm">View</Button>
-                  <DialogContent className="sm:max-w-[425px]">
-                    <DialogHeader>
-                      <DialogTitle>Submit Assignment</DialogTitle>
-                      <DialogDescription>Upload your assignment files and click submit.</DialogDescription>
-                    </DialogHeader>
-                    <div className="grid gap-4 py-4">
-                      <div className="grid items-center grid-cols-4 gap-4">
-                        <Label htmlFor="file" className="text-right">
-                          File
-                        </Label>
-                        <Input id="file" type="file" className="col-span-3" />
-                      </div>
-                      <div className="grid items-center grid-cols-4 gap-4">
-                        <Label htmlFor="notes" className="text-right">
-                          Notes
-                        </Label>
-                        <Textarea
-                          id="notes"
-                          rows={3}
-                          className="col-span-3"
-                          placeholder="Add any additional notes..."
-                        />
-                      </div>
-                    </div>
-                    <DialogFooter>
-                      <Button type="submit">Submit</Button>
-                    </DialogFooter>
-                  </DialogContent>
-                </Dialog>
-              </div>
-            </CardContent>
-          </Card>
+            <CardFooter>
+              <Link href={`/assignment/${id}/${item._id}`}><Button>View Assignment</Button></Link>
+            </CardFooter>
+          </Card>))}
+          
         </div>
         <div>
           <h2 className="text-lg font-semibold mb-4 mt-2">Submitted Assignments</h2>
@@ -174,5 +125,7 @@ export default function UserAssignment() {
         </div>
       </div>
     </div>
+    </>}
+    </>
   )
 }

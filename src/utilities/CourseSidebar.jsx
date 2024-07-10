@@ -19,6 +19,7 @@ import VideoContent from "./Course/Video"
 import { Toaster,toast } from "sonner"
 import UserAssignment from "./Assignment/UserAssignment"
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card"
+import Project from "./Course/Project"
 import PdfViewer from "./Pdf/pdfViewer"
 export default function CourseSidebar({weeksdata,alldata,allcoursedata,crid}) {
   const router = useRouter()
@@ -45,7 +46,49 @@ const validatefun = async()=>{
      const res = await response.json();
      if(res.success){
      setUserdata(res.data);
+     let crcmp = res.data[0].crcmp;
+     weeksdata.map((item)=>{
+      let a = item.content.filter((item)=>item.name==crcmp[crcmp.length-1].name)
+      if(a.length>0){
+        setCurrentWeekindex(weeksdata.indexOf(item))
+        setCurrentContentindex(item.content.indexOf(a[0]))
+        setContent(a[0])
+        setMenuWeek(item.name)
+        setActivemenu(a[0].name)
+        setActiveFolder(a[0].type)
+      }
+      
+     })
      console.log(res.data)
+    
+     }
+     else{
+       setUserdata(null)
+       toast.error(res.message)
+       router.push("/login")
+     }
+  }
+  catch(err){
+    setLoading(false);
+   setUserdata(null)
+   toast.error("Something went wrong! try again later")
+   router.push("/login")
+  }
+
+}
+//vaidate and get function
+const validatefunGet = async()=>{
+  try{
+      const response = await fetch("/api/homeauth",{
+       method:"POST",
+       headers:{
+         "content-type":"application/json",
+         "token":localStorage.getItem("dilmstoken")
+       }
+      })
+     const res = await response.json();
+     if(res.success){
+     setUserdata(res.data);
     
      }
      else{
@@ -120,7 +163,8 @@ setAllComment([])
   if(result.success){
     toast.success(result.message)
     UpdateandGetProgress();
-    validatefun()
+    validatefunGet();
+
   }
   else{
     toast.error(result.message)
@@ -556,8 +600,9 @@ setAllComment([])
           {/* //project starts here */}
           {activeFolder === "project" && (
            <>
+           <Project/>
              <div className={`${isopen?"sm:absolute sm:left-80":""} `}>
-              project
+              
              </div>
            </>
           )}

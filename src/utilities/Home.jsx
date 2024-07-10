@@ -18,6 +18,28 @@ const [loading,setLoading] = useState(false);
 const [isansession,setisansession] = useState(false)
 const [assignment,setAssignment] = useState(3);
 const [project,setProject] = useState(3);
+const [allAssignment,setAllAssignment] = useState([]);
+//getting projects
+const fetchAllAssignment = async(id)=>{
+  console.log("id is ",id)
+  const res = await fetch(`/api/assignment?id=${id}`,{
+    method:"GET",
+    headers:{
+      "Content-Type":"application/json",
+      "token":localStorage.getItem("dilmsadmintoken")
+    }
+  })
+  const data = await res.json()
+  if(data.success){
+    setAllAssignment(data.data)
+    console.log(data)
+    setAssignment(data.data.length)
+  }
+  else{
+    toast.error(data.message)
+    console.log(data)
+  }
+}
 //validating user with home auth
 const validatesFunc = async(token)=>{
   console.log(token);
@@ -34,12 +56,7 @@ const res = await response.json();
 console.log(res);
 if(res.success){
 setData(res.data);
-const totalAssignments = res.data.reduce((acc, item) => acc + item.assignMent.length, 3);
-      const totalProjects = res.data.reduce((acc, item) => acc + item.project.length, 3);
-
-      // Update state with the totals
-      setAssignment(totalAssignments);
-      setProject(totalProjects);
+fetchAllAssignment(res.data[0].Regdomain._id);
 }
 else{
 toast.error(res.message);
@@ -137,55 +154,31 @@ setTimeout(()=>{
           <Card>
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <CardTitle className="text-sm font-medium">Assignments</CardTitle>
-              <Link href="#" className="text-sm text-primary" prefetch={false}>
+              <Link href="/assignment" className="text-sm text-primary" prefetch={false}>
                 View All
               </Link>
             </CardHeader>
             <CardContent>
-              <div className="grid gap-4">
-                <div className="flex items-center justify-between">
+             <div className="grid gap-4">
+             { allAssignment&&allAssignment.slice(0,3).map((item)=>(<div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <div className="rounded-lg bg-muted p-2 text-2xl">
                       <ClipboardIcon className="w-5 h-5" />
                     </div>
                     <div>
-                      <div className="font-medium">Final Project Proposal</div>
-                      <div className="text-xs text-muted-foreground">Due: July 26, 2024</div>
+                      <div className="font-medium">{item.title}</div>
+                      <div className="text-xs text-muted-foreground">Due: {new Date(item.duedate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</div>
                     </div>
                   </div>
                   <div className="text-xs text-muted-foreground">Pending</div>
+                </div>))}
                 </div>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <div className="rounded-lg bg-muted p-2 text-2xl">
-                      <ClipboardIcon className="w-5 h-5" />
-                    </div>
-                    <div>
-                      <div className="font-medium">Midterm Exam</div>
-                      <div className="text-xs text-muted-foreground">Due: July 11, 2024</div>
-                    </div>
-                  </div>
-                  <div className="text-xs text-muted-foreground">Pending</div>
-                </div>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <div className="rounded-lg bg-muted p-2 text-2xl">
-                      <ClipboardIcon className="w-5 h-5" />
-                    </div>
-                    <div>
-                      <div className="font-medium">Weekly Quiz</div>
-                      <div className="text-xs text-muted-foreground">Due: To be Updated..</div>
-                    </div>
-                  </div>
-                  <div className="text-xs text-muted-foreground">Pending</div>
-                </div>
-              </div>
             </CardContent>
           </Card>
           <Card>
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <CardTitle className="text-sm font-medium">Projects</CardTitle>
-              <Link href="#" className="text-sm text-primary" prefetch={false}>
+              <Link href="/project" className="text-sm text-primary" prefetch={false}>
                 View All
               </Link>
             </CardHeader>

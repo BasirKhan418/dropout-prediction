@@ -7,6 +7,7 @@ import { GrProjects } from "react-icons/gr";
 import { GiArtificialIntelligence } from "react-icons/gi";
 import { usePathname } from "next/navigation";
 import {FolderGit2} from "lucide-react"
+import { GoDiscussionClosed } from "react-icons/go";
 import {
   Bell,
   CircleUser,
@@ -96,11 +97,11 @@ export function Sidebar({children}) {
                 Projects
               </Link>
               <Link
-                href="/diai"
+                href="/discussion"
                 className={`flex items-center gap-3 rounded-lg ${pathname=="/diai"?"bg-muted text-primary":" text-muted-foreground"} px-3 py-2  transition-all hover:text-primary`}
               >
-                <GiArtificialIntelligence className="h-5 w-5" />
-                Ai assistant
+                <GoDiscussionClosed className="h-5 w-5" />
+                Discussion Forum
               </Link>
             </nav>
           </div>
@@ -179,11 +180,11 @@ export function Sidebar({children}) {
                 Projects
               </Link>
               <Link
-                href="/diai"
+                href="/discussion"
                 className={`flex items-center gap-3 rounded-lg ${pathname=="/diai"?"bg-muted text-primary":" text-muted-foreground"} px-3 py-2  transition-all hover:text-primary`}
               >
-                <GiArtificialIntelligence className="h-5 w-5" />
-                Ai assistant
+                <GoDiscussionClosed className="h-5 w-5" />
+                Discussion Forum
               </Link>
             </nav>
               <div className="mt-auto">
@@ -226,7 +227,7 @@ export function Sidebar({children}) {
               <DropdownMenuLabel>My Account</DropdownMenuLabel>
               <DropdownMenuSeparator />
               <Link href={"/profile"}><DropdownMenuItem>Profile</DropdownMenuItem></Link>
-              <DropdownMenuItem>Support</DropdownMenuItem>
+              <Link href={"https://www.devsindia.in/contact"} target="_blank"> <DropdownMenuItem>Support</DropdownMenuItem></Link>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={()=>{
                 setIsOpen(true)

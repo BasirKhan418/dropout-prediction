@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
 import { Button } from "@/components/ui/button"
 
-export default function Component({title,description,progress,duration,validity,img,skills,isadmin}) {
+export default function Component({title,description,progress,duration,validity,img,skills,isadmin,assignment}) {
  
   return (
     <Card className="w-full max-w-sm rounded-lg overflow-hidden shadow-lg transition-transform duration-300 ease-in-out hover:-translate-y-2 hover:shadow-xl p-2 my-2 md:mx-2 xl:mx-2 mx-0 lg:mx-2">
@@ -31,9 +31,9 @@ export default function Component({title,description,progress,duration,validity,
       <div className="p-6 bg-background">
         <h3 className="text-xl font-bold mb-2">{title}</h3>
          <div className="mb-4">
-         { !isadmin&&<><Progress value={progress} aria-label="75% complete" />
+         { !isadmin&&!assignment&&<><Progress value={progress} aria-label="75% complete" />
           <div className="flex items-center justify-between mt-2 ">
-       <span className="text-muted-foreground text-sm">{progress}% complete</span>
+      { !assignment&&<span className="text-muted-foreground text-sm">{progress}% complete</span>}
             <span className="text-muted-foreground text-sm">Valid for {validity} year</span>
           </div></>}
           <div className="flex items-center justify-between mt-2 flex-wrap">
@@ -44,7 +44,8 @@ export default function Component({title,description,progress,duration,validity,
         </div>
         <div className="flex items-center justify-between">
           {isadmin&&<Button>Add Now</Button>}
-          {!isadmin&&<Button>View Now</Button>}
+          {!isadmin&&!assignment&&<Button>View Now</Button>}
+          {assignment&&<Button>View Assignment</Button>}
           <div className="flex items-center gap-2">
             <StarIcon className="w-5 h-5 text-yellow-500" />
             <span className="text-muted-foreground text-sm">4.8</span>
