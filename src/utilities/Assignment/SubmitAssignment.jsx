@@ -160,7 +160,9 @@ export default function SubmitAssignment({aid,crid,id}) {
           placeholder="Write your solution here..."
           onChange={handleChange}
           value={response}
-          
+          onCopy={(e) => e.preventDefault()}
+            onCut={(e) => e.preventDefault()}
+            onPaste={(e) => e.preventDefault()}
         />
         <div className="flex justify-start gap-2">
           <Button variant="ghost" onClick={()=>{

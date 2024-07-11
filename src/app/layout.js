@@ -23,6 +23,7 @@ console.log(pathname);
       <body className={inter.className}>
       <NextTopLoader 
       color="#FF0000"
+      showSpinner={false}
       />
       {pathname === "/adminlogin" ? (
   children

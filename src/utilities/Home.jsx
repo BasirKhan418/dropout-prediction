@@ -20,7 +20,30 @@ const [assignment,setAssignment] = useState(3);
 const [project,setProject] = useState(3);
 const [allAssignment,setAllAssignment] = useState([]);
 //getting projects
-const fetchAllAssignment = async(id)=>{
+//getting submitted assignments
+const fetchAllSubmittedAssignment = async(pendata,id,uid)=>{
+  setLoading(true)
+  const res = await fetch(`/api/submitassignment?crid=${id}&&userid=${uid}`,{
+    method:"GET",
+    headers:{
+      "Content-Type":"application/json",
+      "token":localStorage.getItem("dilmsadmintoken")
+    }
+  })
+  const data = await res.json()
+  setLoading(false)
+  if(data.success){
+    let submitted = data.data&&data.data.filter((item)=>item.status=="submitted")
+    let evaluated = data.data&&data.data.filter((item)=>item.status=="evaluated")
+  let pending = pendata&&data.data&&pendata.filter((item)=>!submitted.find((item2)=>item2.asid._id==item._id)&&!evaluated.find((item2)=>item2.asid._id==item._id))
+  setAssignment(pending.length)
+  setAllAssignment(data.data)
+  }
+  else{
+    //
+  }
+}
+const fetchAllAssignment = async(id,uid)=>{
   console.log("id is ",id)
   const res = await fetch(`/api/assignment?id=${id}`,{
     method:"GET",
@@ -31,9 +54,7 @@ const fetchAllAssignment = async(id)=>{
   })
   const data = await res.json()
   if(data.success){
-    setAllAssignment(data.data)
-    console.log(data)
-    setAssignment(data.data.length)
+    fetchAllSubmittedAssignment(data.data,id,uid)
   }
   else{
     toast.error(data.message)
@@ -56,7 +77,7 @@ const res = await response.json();
 console.log(res);
 if(res.success){
 setData(res.data);
-fetchAllAssignment(res.data[0].Regdomain._id);
+fetchAllAssignment(res.data[0].Regdomain._id,res.data[0]._id);
 }
 else{
 toast.error(res.message);
@@ -166,8 +187,8 @@ setTimeout(()=>{
                       <ClipboardIcon className="w-5 h-5" />
                     </div>
                     <div>
-                      <div className="font-medium">{item.title}</div>
-                      <div className="text-xs text-muted-foreground">Due: {new Date(item.duedate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</div>
+                      <div className="font-medium">{item.asid.title}</div>
+                      <div className="text-xs text-muted-foreground">Due: {new Date(item.asid.duedate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</div>
                     </div>
                   </div>
                   <div className="text-xs text-muted-foreground">Pending</div>

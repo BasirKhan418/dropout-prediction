@@ -548,7 +548,7 @@ setAllComment([])
            {activeFolder === "assignment" && (
            <>
              <div className={`${isopen?"sm:absolute sm:left-80":""} `}>
-              <UserAssignment/>
+              <UserAssignment id={crid} userid={userdata[0]._id}/>
              </div>
            </>
           )}
