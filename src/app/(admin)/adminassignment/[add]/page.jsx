@@ -40,6 +40,10 @@ export default function Page({params}) {
   const [promptmodalopen,setPromptmodalopen] = useState(false)
   const [aiprompt,setAiprompt] = useState("")
   const [ailoading,setAiloading] = useState(false)
+  const [submitassignment,setSubmitassignment] = useState([])
+  const [evaluated,setEvaluated] = useState([])
+  const [grademodal,setGrademodal] = useState(false)
+  const [opengradeaimodal,setOpengradeaimodal] = useState(false)
   //fetch all asignment
   const fetchAllAssignment = async()=>{
     const res = await fetch(`/api/assignment?id=${params.add}`,{
@@ -58,10 +62,32 @@ export default function Page({params}) {
       console.log(data)
     }
   }
+  //fetch all submitted assignment
+  const fetchAllSubmittedAssignment = async()=>{
+    const res = await fetch(`/api/assignmentcrud?id=${params.add}`,{
+      method:"GET",
+      headers:{
+        "Content-Type":"application/json",
+        "token":localStorage.getItem("dilmsadmintoken")
+      }
+    })
+    const data = await res.json()
+    if(data.success){
+      let submitted = data.data.filter((item)=>item.status=="submitted")
+      setSubmitassignment(submitted)
+      let evaluated = data.data.filter((item)=>item.status=="evaluated")
+      setEvaluated(evaluated)
+    }
+    else{
+      toast.error(data.message)
+      console.log(data)
+    }
+  }
   //end
   //useeffectfor fetch all assignment
   useEffect(()=>{
     fetchAllAssignment()
+    fetchAllSubmittedAssignment()
   },[])
   console.log(allAssignment)
   //end
@@ -238,7 +264,84 @@ else{
     toast.error("Something went wrong please try again later.Or Too many requests, please try again later!" + err);
   }
   }
+//grade modal starts from here
+const [gradeForm,setGradeForm] = useState({
+  title:"",
+  desc:"",
+  response:"",
+  marks:"",
+  id:"",
+})
+//handle CXhange
+const handleGradeChange = (e)=>{
+  setGradeForm({...gradeForm,[e.target.name]:e.target.value})
+}
+const handleGrade = (item)=>{
+  setGradeForm({
+    title:item.asid.title,
+    desc:item.asid.desc,
+    response:item.response,
+    marks:item.marks,
+    id:item._id
+  })
+  setGrademodal(true)
 
+}
+//handle Update Grade
+const handleUpdateGrade = async()=>{
+  if(gradeForm.marks==""){
+    toast.error("Please enter marks")
+    return
+  }
+  setLoading(true)
+  const res = await fetch("/api/assignmentcrud",{
+    method:"POST",
+    headers:{
+      "Content-Type":"application/json",
+      "token":localStorage.getItem("dilmsadmintoken")
+    },
+    body:JSON.stringify({id:gradeForm.id,marks:gradeForm.marks})
+  })
+  const data = await res.json()
+  setLoading(false)
+  if(data.success){
+    toast.success(data.message)
+    setGrademodal(false)
+    fetchAllSubmittedAssignment()
+  }
+  else{
+    toast.error(data.message)
+  }
+
+}
+//evalute by ai 
+const handleAiGrade = async(item)=>{
+  console.log(item)
+  try{
+    setOpengradeaimodal(true)
+  const chatSession = model.startChat({
+    generationConfig,
+    history: [],
+  });
+  let prompt = `I have an assignment with the following details: question: ${item.asid.title}. Description: ${item.asid.desc}. Answer: ${item.response}. Can you please grade this assignment between 1 to 100? and also check this answer is copy pasted or not and check the plagiarism?.Generate only marks key in json and what you have calculated value withthat value field not anything else.`
+  const result = await chatSession.sendMessage(prompt);
+  setOpengradeaimodal(false)
+  let data = JSON.parse(result.response.text())
+  console.log("ai data is ",data)
+  setGradeForm({
+    title:item.asid.title,
+    desc:item.asid.desc,
+    response:item.response,
+    marks:data.marks,
+    id:item._id
+  })
+  setGrademodal(true)
+}
+catch(err){
+  toast.error("Something went wrong please try again later.Or Too many requests, please try again later!" + err);
+  setOpengradeaimodal(false)
+}
+}
   return (
     <>
      <Toaster position="top-center" expand={false}/>
@@ -436,43 +539,32 @@ else{
                     <TableHead className="text-sm font-medium">Student</TableHead>
                     <TableHead className="text-sm font-medium">Assignment</TableHead>
                     <TableHead className="text-sm font-medium">Submitted</TableHead>
-                    <TableHead className="text-sm font-medium">Grade</TableHead>
+                    <TableHead className="text-sm font-medium">Due Date</TableHead>
                     <TableHead className="text-sm font-medium text-right">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  <TableRow>
-                    <TableCell className="font-medium">John Doe</TableCell>
-                    <TableCell>Midterm Exam</TableCell>
-                    <TableCell>2023-05-14</TableCell>
+                  {submitassignment&&submitassignment.map((item)=>(<TableRow key={item._id}>
+                    <TableCell className="font-medium">{item.userid.name}</TableCell>
+                    <TableCell>{item.asid.title}</TableCell>
+                    <TableCell>{new Date(item.createdAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</TableCell>
                     <TableCell>
-                      <div className="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-medium">A</div>
+                      <div className="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-medium">{new Date(item.asid.duedate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</div>
                     </TableCell>
                     <TableCell className="text-right">
-                      <Button variant="outline" size="sm" className="px-2 py-1 rounded-md text-sm">
-                        View
+                      <Button variant="outline" size="sm" className="px-2 py-1 rounded-md text-sm" onClick={()=>{
+                        handleGrade(item)
+                      }}>
+                        View & Grade
                       </Button>
-                      <Button variant="outline" size="sm" className="ml-2 px-2 py-1 rounded-md text-sm">
-                        Grade
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell className="font-medium">Jane Smith</TableCell>
-                    <TableCell>Final Project</TableCell>
-                    <TableCell>2023-06-29</TableCell>
-                    <TableCell>
-                      <div className="bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full text-xs font-medium">B</div>
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <Button variant="outline" size="sm" className="px-2 py-1 rounded-md text-sm">
-                        View
-                      </Button>
-                      <Button variant="outline" size="sm" className="ml-2 px-2 py-1 rounded-md text-sm">
-                        Grade
+                      <Button variant="" size="sm" className="ml-2 px-2 py-1 rounded-md text-sm" onClick={()=>{
+                        handleAiGrade(item)
+                      }}> 
+                        Ai&nbsp;Grade
                       </Button>
                     </TableCell>
-                  </TableRow>
+                  </TableRow>))}
+                
                 </TableBody>
               </Table>
             </CardContent>
@@ -492,44 +584,29 @@ else{
                   <TableRow>
                     <TableHead className="text-sm font-medium">Student</TableHead>
                     <TableHead className="text-sm font-medium">Assignment</TableHead>
-                    <TableHead className="text-sm font-medium">Submitted</TableHead>
+                    <TableHead className="text-sm font-medium">Updated At</TableHead>
                     <TableHead className="text-sm font-medium">Grade</TableHead>
                     <TableHead className="text-sm font-medium text-right">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  <TableRow>
-                    <TableCell className="font-medium">John Doe</TableCell>
-                    <TableCell>Midterm Exam</TableCell>
-                    <TableCell>2023-05-14</TableCell>
+                 { evaluated&&evaluated.map((item)=>(<TableRow key={item._id}>
+                    <TableCell className="font-medium">{item.userid.name}</TableCell>
+                    <TableCell>{item.asid.title}</TableCell>
+                    <TableCell>{new Date(item.updatedAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</TableCell>
                     <TableCell>
-                      <div className="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-medium">A</div>
+                      <div className="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-medium">{item.marks}%</div>
                     </TableCell>
                     <TableCell className="text-right">
-                      <Button variant="outline" size="sm" className="px-2 py-1 rounded-md text-sm">
-                        View
+                      <Button variant="outline" size="sm" className="px-2 py-1 rounded-md text-sm" onClick={()=>{
+                        handleGrade(item)
+                      }}>
+                        View & Update Grade
                       </Button>
-                      <Button variant="outline" size="sm" className="ml-2 px-2 py-1 rounded-md text-sm">
-                        Edit Grade
-                      </Button>
+                     
                     </TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell className="font-medium">Jane Smith</TableCell>
-                    <TableCell>Final Project</TableCell>
-                    <TableCell>2023-06-29</TableCell>
-                    <TableCell>
-                      <div className="bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full text-xs font-medium">B</div>
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <Button variant="outline" size="sm" className="px-2 py-1 rounded-md text-sm">
-                        View
-                      </Button>
-                      <Button variant="outline" size="sm" className="ml-2 px-2 py-1 rounded-md text-sm">
-                        Edit Grade
-                      </Button>
-                    </TableCell>
-                  </TableRow>
+                  </TableRow>))}
+                  
                 </TableBody>
               </Table>
             </CardContent>
@@ -647,6 +724,91 @@ else{
         </DialogFooter>
       </DialogContent>
     </Dialog>
+    {/* grade modal */}
+    <Dialog open={grademodal}>
+      <DialogContent className="">
+        <DialogHeader>
+          <DialogTitle>Edit & View Grade</DialogTitle>
+          <DialogDescription>
+            Make changes to your assignment here. Click save when you're done.
+          </DialogDescription>
+        </DialogHeader>
+        <Card className="shadow-lg rounded-lg">
+            <CardContent className="p-6">
+              <div className="grid  gap-2" >
+                <div className="grid gap-2 col-span-1 md:col-span-2">
+                  <Label htmlFor="title" className="text-sm font-medium">
+                    Title
+                  </Label>
+                  <Input
+                    id="title"
+                    name="title"
+                    value={gradeForm.title}
+                    onChange={handleGradeChange}
+                    placeholder="Assignment Title"
+                    className="rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm transition-colors focus:outline-none focus:ring-1 focus:ring-ring"
+                  />
+                </div>
+                
+                <div className="grid gap-2 col-span-1 md:col-span-2">
+                  <Label htmlFor="description" className="text-sm font-medium">
+                   Question Description
+                  </Label>
+                  <Textarea
+                    id="description"
+                    rows={4}
+                    value={gradeForm.desc}
+                    name="desc"
+                    onChange={handleGradeChange}
+                    placeholder="Assignment Description"
+                    className="rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm transition-colors focus:outline-none focus:ring-1 focus:ring-ring"
+                  />
+                </div>
+                <div className="grid gap-2 col-span-1 md:col-span-2">
+                  <Label htmlFor="description" className="text-sm font-medium">
+                   Answer of the question
+                  </Label>
+                  <Textarea
+                    id="response"
+                    rows={4}
+                    value={gradeForm.response}
+                    name="desc"
+                    onChange={handleGradeChange}
+                    placeholder="Assignment Response"
+                    className="rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm transition-colors focus:outline-none focus:ring-1 focus:ring-ring"
+                  />
+                </div>
+                <div className="grid gap-2 col-span-1 md:col-span-2">
+                  <Label htmlFor="link" className="text-sm font-medium">
+                    Marks
+                  </Label>
+                  <Input
+                    id="marks"
+                    type="number"
+                    name="marks"
+                    value={gradeForm.marks}
+                    onChange={handleGradeChange}
+                    className="rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm transition-colors focus:outline-none focus:ring-1 focus:ring-ring"
+                  />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        <DialogFooter>
+          <Button onClick={handleUpdateGrade}>Update Marks</Button>
+          <Button variant={"destructive"} onClick={()=>{
+            setGrademodal(false)
+            setGradeForm({
+              title:"",
+              desc:"",
+              response:"",
+              marks:"",
+              id:"",
+            })
+          }}>Close</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
     {/* confirmation modal */}
     <AlertDialog open={alertopen}>
 
@@ -706,6 +868,34 @@ else{
             setPromptmodalopen(false)
           }}>Cancel</Button>
                 <Button onClick={handleRunAi}>Create</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+    {/* ai loading grade modal */}
+    <Dialog open={opengradeaimodal}>
+      
+      <DialogContent className="sm:max-w-[425px]">
+        <DialogHeader>
+          <DialogTitle>NXT-AI ASSIGNMENT EVEALUATOR</DialogTitle>
+          <DialogDescription>
+            Please wait while we are grading your assignment....
+          </DialogDescription>
+        </DialogHeader>
+        
+       <div className="w-full max-w-md mx-auto animate-pulse p-9">
+          <h1 className="h-2 bg-gray-300 rounded-lg w-52 dark:bg-gray-600" />
+          <p className="w-48 h-2 mt-6 bg-gray-200 rounded-lg dark:bg-gray-700" />
+          <p className="w-full h-2 mt-4 bg-gray-200 rounded-lg dark:bg-gray-700" />
+          <p className="w-64 h-2 mt-4 bg-gray-200 rounded-lg dark:bg-gray-700" />
+          <p className="w-4/5 h-2 mt-4 bg-gray-200 rounded-lg dark:bg-gray-700" />
+        </div>
+        
+        
+        <DialogFooter>
+    
+          <Button variant={"destructive"} onClick={()=>{
+          setOpengradeaimodal(false)
+          }}>Cancel</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

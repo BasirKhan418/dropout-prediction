@@ -1,9 +1,12 @@
+"use client"
 import React from 'react'
 import UserAssignment from '@/utilities/Assignment/UserAssignment'
+import useAuth from '../../../../hooks/useAuth';
 const page = ({params}) => {
+  const [data,loading] = useAuth();
   return (
     <div>
-      <UserAssignment id={params.details}/>
+      <UserAssignment id={params.details} userid={data&&data[0]._id}/>
     </div>
   )
 }

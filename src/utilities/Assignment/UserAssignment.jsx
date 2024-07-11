@@ -10,8 +10,11 @@ import Link from "next/link"
 import { useEffect, useState } from "react"
 import { Toaster,toast } from "sonner"
 import ProfielSpinner from "../Spinner/ProfielSpinner"
-export default function UserAssignment({id}) {
+import { set } from "mongoose"
+export default function UserAssignment({id,userid}) {
   const [allAssignments, setAllAssignments] = useState([]);
+  const [submittedAssignments, setSubmittedAssignments] = useState([]);
+  const [evaluatedAssignments, setEvaluatedAssignments] = useState([]);
   const [loading, setLoading] = useState(false);
   const fetchAllAssignment = async()=>{
     setLoading(true)
@@ -26,15 +29,40 @@ export default function UserAssignment({id}) {
     setLoading(false)
     if(data.success){
       setAllAssignments(data.data)
+      fetchAllSubmittedAssignment(data.data)
     }
     else{
       toast.error(data.message)
       console.log(data)
     }
   }
+  const fetchAllSubmittedAssignment = async(pendata)=>{
+    setLoading(true)
+    console.log(id,userid)
+    const res = await fetch(`/api/submitassignment?crid=${id}&&userid=${userid}`,{
+      method:"GET",
+      headers:{
+        "Content-Type":"application/json",
+        "token":localStorage.getItem("dilmsadmintoken")
+      }
+    })
+    const data = await res.json()
+    setLoading(false)
+    if(data.success){
+    let submitted = data.data&&data.data.filter((item)=>item.status=="submitted")
+    let evaluated = data.data&&data.data.filter((item)=>item.status=="evaluated")
+    let pending = pendata&&data.data&&pendata.filter((item)=>!submitted.find((item2)=>item2.asid._id==item._id)&&!evaluated.find((item2)=>item2.asid._id==item._id))
+    setAllAssignments(pending)
+    setSubmittedAssignments(submitted)
+    setEvaluatedAssignments(evaluated)
+    }
+    else{
+      //
+    }
+  }
   useEffect(()=>{
     fetchAllAssignment();
-  },[])
+  },[userid])
   console.log(allAssignments)
   return (
     <>
@@ -65,63 +93,39 @@ export default function UserAssignment({id}) {
         </div>
         <div>
           <h2 className="text-lg font-semibold mb-4 mt-2">Submitted Assignments</h2>
-          <Card className="my-2">
+          {submittedAssignments.map((item)=>(<Card className="my-2" key={item._id}>
             <CardHeader>
-              <CardTitle>Mastering JavaScript</CardTitle>
-              <CardDescription>Dive deep into JavaScript and learn advanced concepts.</CardDescription>
+              <CardTitle>{item.asid.title}</CardTitle>
+              <CardDescription>{item.asid.desc}</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="flex items-center justify-between">
-                <div className="text-sm text-muted-foreground">Due: August 1, 2023</div>
+                <div className="text-sm text-muted-foreground">Submitted At: {new Date(item.createdAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</div>
                 <Badge variant="success">Submitted</Badge>
               </div>
             </CardContent>
-          </Card>
-          <Card className="my-2">
-            <CardHeader>
-              <CardTitle>Responsive Web Design</CardTitle>
-              <CardDescription>Learn how to build responsive and mobile-friendly websites.</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="flex items-center justify-between">
-                <div className="text-sm text-muted-foreground">Due: September 1, 2023</div>
-                <Badge variant="success">Submitted</Badge>
-              </div>
-            </CardContent>
-          </Card>
+          </Card>))}
+          
         </div>
         <div>
           <h2 className="text-lg font-semibold mb-4 mt-2">Evaluated Assignments</h2>
-          <Card className="my-2">
+          {evaluatedAssignments&&evaluatedAssignments.map((item)=>(<Card className="my-2" key={item._id}>
             <CardHeader>
-              <CardTitle>Intro to React</CardTitle>
-              <CardDescription>Learn the fundamentals of React and build your first app.</CardDescription>
+              <CardTitle>{item.asid.title}</CardTitle>
+              <CardDescription>{item.asid.desc.slice(0,75)+"..."}</CardDescription>
+              <div className="text-sm text-muted-foreground">Evaluated At : <span className="text-purple-600">{new Date(item.updatedAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</span></div>
             </CardHeader>
+            
             <CardContent>
               <div className="flex items-center justify-between">
-                <div className="text-sm text-muted-foreground">Due: June 30, 2023</div>
+                
                 <div className="flex items-center gap-2">
                   <Badge variant="success">Evaluated</Badge>
-                  <div className="text-sm text-muted-foreground">Score: 90%</div>
+                  <div className="text-sm text-primary font-semibold">Score: {item.marks}%</div>
                 </div>
               </div>
             </CardContent>
-          </Card>
-          <Card>
-            <CardHeader>
-              <CardTitle>Advanced CSS Techniques</CardTitle>
-              <CardDescription>Explore advanced CSS concepts and build complex layouts.</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="flex items-center justify-between">
-                <div className="text-sm text-muted-foreground">Due: July 15, 2023</div>
-                <div className="flex items-center gap-2">
-                  <Badge variant="success">Evaluated</Badge>
-                  <div className="text-sm text-muted-foreground">Score: 85%</div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+          </Card>))}
         </div>
       </div>
     </div>
