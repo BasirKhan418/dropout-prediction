@@ -2,9 +2,16 @@
 import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
 import { useState,useEffect } from "react"
-export default function SubmitAssignment({aid,crid}) {
+import { Toaster,toast } from "sonner"
+export default function SubmitAssignment({aid,crid,id}) {
     const [data,setData] = useState(null);
     const [loading,setLoading] = useState(false);
+    const [response,setResponse] = useState("")
+    //handle change in response
+    const handleChange = (e)=>{
+        setResponse(e.target.value)
+        localStorage.setItem("response",e.target.value);
+    }
     const fetchAssignment = async()=>{
         try{
             setLoading(true);
@@ -23,6 +30,7 @@ export default function SubmitAssignment({aid,crid}) {
             }
             else{
                 setData(null)
+                toast.error(res.message)
             }
         }
         catch(err){
@@ -30,11 +38,54 @@ export default function SubmitAssignment({aid,crid}) {
             setData(null)
         }
     }
+
+    const handleContextMenu = (event) => {
+      // event.preventDefault(); // Prevent the default right-click context menu
+    };
+
     useEffect(()=>{
         fetchAssignment();
+       if(localStorage.getItem("response")){
+        setResponse(localStorage.getItem("response"));
+       }
+        window.addEventListener('contextmenu', handleContextMenu);
+      
+        return () => {
+       
+          window.removeEventListener('contextmenu', handleContextMenu);
+        };
         
     },[])
+  //handleSubmit Assignment
+  const handleSubmit = async()=>{
+    if(response.length<10){
+        return toast.error("Assignment content too short or empty to submit")
+    }
+    const res = await fetch("/api/submitassignment",{
+        method:"POST",
+        headers:{
+            "content-type":"application/json",
+            "token":localStorage.getItem("dilmstoken"),
+        },
+        body:JSON.stringify({
+            asid:aid,
+            crid:crid,
+            userid:id,
+            response:response
+        })
+    })
+    let result = await res.json();
+    if(result.success){
+        toast.success(result.message)
+    }
+    else{
+        toast.error(result.message)
+    }
+  }
+  console.log(id);
   return (
+    <>
+    <Toaster position="top-center" expand={"false"}/>
     <div className="grid grid-cols-1 md:grid-cols-2 h-screen w-full">
       <div className="bg-background rounded-lg border p-6 flex flex-col gap-4 dry">
         <div className="flex items-center justify-between">
@@ -79,16 +130,19 @@ export default function SubmitAssignment({aid,crid}) {
         <Textarea
           className="flex-1 resize-none p-4 rounded-md border border-input shadow-sm"
           placeholder="Write your solution here..."
+          onChange={handleChange}
+          value={response}
           onCopy={(e) => e.preventDefault()}
             onCut={(e) => e.preventDefault()}
             onPaste={(e) => e.preventDefault()}
         />
         <div className="flex justify-start gap-2">
           <Button variant="ghost">Cancel</Button>
-          <Button>Submit</Button>
+          <Button onClick={handleSubmit}>Submit</Button>
         </div>
       </div>
     </div>
+    </>
   )
 }
 
