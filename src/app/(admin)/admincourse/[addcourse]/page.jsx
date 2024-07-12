@@ -292,7 +292,7 @@ const uploadvideo = async()=>{
     "max_resolution_tier": "1080p",
     "encoding_tier": "baseline"
   },
-  "cors_origin": "*"
+  "cors_origin": "https://lms.devsindia.in"
       },
       {
         auth: {
