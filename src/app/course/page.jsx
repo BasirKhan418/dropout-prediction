@@ -4,6 +4,8 @@ import Card from '@/utilities/Course/Card'
 import Link from 'next/link'
 import useAuth from '../../../hooks/useAuth'
 import HomePageSkl from '@/utilities/skeleton/HomePageSkl'
+import Head from 'next/head'
+
 const Page = () => {
   const [data,message,loading] = useAuth();
   console.log(data,message,loading)

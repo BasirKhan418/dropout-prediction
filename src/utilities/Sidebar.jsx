@@ -115,7 +115,7 @@ export function Sidebar({children}) {
               </CardHeader>
               <CardContent className="p-2 pt-0 md:p-4 md:pt-0">
                 <Button size="sm" className="w-full mb-2">
-                  <Link href="https://devsindia.in/student">
+                  <Link href="https://devsindia.in/student" target="_blank">
                     Browse Courses
                   </Link>
                 </Button>
@@ -196,9 +196,9 @@ export function Sidebar({children}) {
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="p-2 pt-0 md:p-4 md:pt-0">
-                    <Button size="sm" className="w-full mb-2">
-                      Browse Courses
-                    </Button>
+                  <Link href="https://devsindia.in/student" target="_blank">
+                    Browse Courses
+                  </Link>
                   </CardContent>
                 </Card>
               </div>

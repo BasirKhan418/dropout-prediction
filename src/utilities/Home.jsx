@@ -11,8 +11,10 @@ import { useRouter } from "next/navigation"
 import SessionDetected from "./Auth/SessionDetected"
 import Image from "next/image"
 import HomePageSkl from "./skeleton/HomePageSkl"
+import useFcmToken from "../../hooks/useFcmToken"
 export default function Home() {
   const router = useRouter();
+  const { token, notificationPermissionStatus } = useFcmToken();
 const [data,setData] = useState(null);
 const [loading,setLoading] = useState(false);
 const [isansession,setisansession] = useState(false)
@@ -22,7 +24,7 @@ const [allAssignment,setAllAssignment] = useState([]);
 //getting projects
 //getting submitted assignments
 const fetchAllSubmittedAssignment = async(pendata,id,uid)=>{
-  setLoading(true)
+ 
   const res = await fetch(`/api/submitassignment?crid=${id}&&userid=${uid}`,{
     method:"GET",
     headers:{
@@ -61,6 +63,27 @@ const fetchAllAssignment = async(id,uid)=>{
     console.log(data)
   }
 }
+//sending notification
+const SendNotification = async(id,title)=>{
+try{
+const res = await fetch("/api/notificationtoken",{
+  method:"POST",
+  headers:{
+    "Content-Type":"application/json",
+    "token":localStorage.getItem("dilmstoken")
+  },
+ body:JSON.stringify({
+    crid:id,
+    token:token,
+    title:title
+ })
+})
+let result  = await res.json();
+}
+catch(err){
+  console.log(err)
+}
+}
 //validating user with home auth
 const validatesFunc = async(token)=>{
   console.log(token);
@@ -95,7 +118,11 @@ setTimeout(()=>{
   useEffect(()=>{
  validatesFunc(localStorage.getItem("dilmstoken"));
   },[])
-  console.log(data)
+  useEffect(()=>{
+    if(token!=null&&data!=null){
+      SendNotification(data&&data[0].Regdomain._id,data&&data[0].Regdomain.title)
+    }
+  },[token,data])
   return (
     <>
     <Toaster position="top-center" expand={false}/>
@@ -161,10 +188,10 @@ setTimeout(()=>{
                     <Image src={item.Regdomain.img} width="40" height="40" className="rounded-lg" alt="Course Thumbnail" />
                     <div>
                       <div className="font-medium">{item.Regdomain.title}</div>
-                      <div className="text-xs text-muted-foreground">Completed: 20%</div>
+                      <div className="text-xs text-muted-foreground">Completed: {item.progress}%</div>
                     </div>
                   </div>
-                  <Progress value={20
+                  <Progress value={item.progress
                   } className="w-20" />
                 </div>))}
            

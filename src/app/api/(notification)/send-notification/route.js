@@ -1,5 +1,6 @@
 import admin from "firebase-admin";
 import { NextRequest, NextResponse } from "next/server";
+import NotificationToken from "../../../../../models/NotificationToken";
 
 // Initialize Firebase Admin SDK
 if (!admin.apps.length) {
@@ -10,8 +11,12 @@ if (!admin.apps.length) {
 }
 
 export async function POST(request) {
-  const { tokens, title, message, link } = await request.json();
-const token = ["daGnCgRVlF-5B7ZVDj5ZEH:APA91bHGPdA4OCEgdS16BPZFsSXEz7SpP2KUVIWmS_eh_PNsFKKa4L3DM7M4okVfa7X5Te1BBuqUi-GWNs2RYk3lmSJjCOlfGc6JV03VWn8e7xmCpB4_6x_yRCjgIbPgwHtJjSVUEmKk"]
+  const { title, message, link ,id} = await request.json();
+  console.log(id)
+  let data = await NotificationToken.findOne({_id:id})
+  console.log(data)
+  console.log("Token:", data.token); // Log the token for debugging
+
   const payload = {
     notification: {
       title: title,
@@ -29,14 +34,16 @@ const token = ["daGnCgRVlF-5B7ZVDj5ZEH:APA91bHGPdA4OCEgdS16BPZFsSXEz7SpP2KUVIWmS
 
   try {
     const response = await admin.messaging().sendMulticast({
-      tokens: token,
+      tokens: data.token,
       ...payload
     });
+
+    console.log("Response:", response); // Log the response for debugging
 
     const failedTokens = [];
     response.responses.forEach((resp, idx) => {
       if (!resp.success) {
-        failedTokens.push(tokens[idx]);
+        failedTokens.push(data.token[idx]);
       }
     });
 
@@ -47,7 +54,6 @@ const token = ["daGnCgRVlF-5B7ZVDj5ZEH:APA91bHGPdA4OCEgdS16BPZFsSXEz7SpP2KUVIWmS
     return NextResponse.json({
       success: true,
       message: "Notifications sent!",
-      success:true,
       failures: failedTokens,
     });
   } catch (error) {

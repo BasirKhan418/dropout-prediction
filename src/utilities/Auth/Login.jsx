@@ -74,20 +74,19 @@ console.log(otp);
     <>
      <Toaster position="top-center"  expand={false}/>
     {loading?<div className="absolute flex justify-center items-center h-full w-full"><ProfielSpinner/></div>:""}
-    <div className={`w-full lg:grid lg:min-h-[600px] lg:grid-cols-2 xl:min-h-[800px] ${loading?"opacity-30":""}`}>
+    <div className={`w-full lg:grid  lg:grid-cols-2  ${loading?"opacity-30":""}`}>
      
       <div className="flex items-center justify-center py-12">
         <div className="mx-auto grid w-[350px] gap-6">
           <div className="grid gap-2 text-center">
           <div className="flex justify-center items-center my-4">
-      <Image 
-        src="https://res.cloudinary.com/dst73auvn/image/upload/v1714112756/logogif_slfyto.gif" 
+      <img
+        src="https://res.cloudinary.com/dst73auvn/image/upload/v1720798286/Newlogodi_xxx9t7.png" 
         alt="My Image"
-        width={65} // Specify the width of the image
-        height={65} // Specify the height of the image
+      className="lg:h-48 lg:w-48 lg:absolute w-48 h-48"
       />
     </div>
-            <h1 className="text-3xl font-bold">Login to DI-LMS</h1>
+            <h1 className="text-3xl font-bold mt-8">Login to DI-LMS</h1>
             <p className="text-balance text-muted-foreground ">
               Enter your email to login to your account
             </p>
@@ -153,9 +152,9 @@ console.log(otp);
           </div> */}
         </div>
       </div>
-      <div className="hidden bg-muted lg:block">
+      <div className="hidden bg-muted lg:block md:block">
         <Image
-          src="/dilms.jpg"
+          src="https://res.cloudinary.com/dst73auvn/image/upload/v1720797609/lms_vfk9oh.png"
           alt="Image"
           width="1920"
           height="1080"

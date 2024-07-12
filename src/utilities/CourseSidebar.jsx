@@ -69,7 +69,6 @@ const validatefun = async()=>{
      }
   }
   catch(err){
-    setLoading(false);
    setUserdata(null)
    toast.error("Something went wrong! try again later")
    router.push("/login")

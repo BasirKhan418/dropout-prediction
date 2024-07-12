@@ -1,7 +1,7 @@
 
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
@@ -11,9 +11,70 @@ import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@
 import { Button } from "@/components/ui/button"
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table"
 import Chat from "@/utilities/Ai/Chat"
+import { Toaster,toast } from "sonner"
 export default function Page() {
   const [activeTab, setActiveTab] = useState("sent")
-  const [aiopen,setaiopen] = useState(false)
+  const [aiopen,setaiopen] = useState(false);
+  const [allData,setAllData] = useState([]);
+  const [loading,setLoading] = useState(false)
+  const FetchNotification = async () => {
+    const res = await fetch("/api/notificationtoken",{
+      method:"GET",
+      headers:{
+        "Content-Type":"application/json",
+        "token":localStorage.getItem("dilmsadmintoken")
+      }
+    })
+    const result = await res.json();
+    if(result.success){
+    setAllData(result.data)
+    console.log(result.data)
+    }
+  }
+  useEffect(()=>{
+    FetchNotification()
+  },[])
+  //Notidicationdata
+const [notificationData,setNotificationData] = useState({
+  title:"",
+  desc:"",
+  link:"",
+  id:"",
+})
+const handleChange = (e) => {
+  setNotificationData({
+    ...notificationData,
+    [e.target.name]:e.target.value
+  })
+}
+const handleSubmit = async (e) => {
+  console.log(notificationData)
+  e.preventDefault()
+  const arr = [];
+  arr.push(notificationData.token)
+  console.log(arr)
+  setLoading(true)
+  const res = await fetch("/api/send-notification",{
+    method:"POST",
+    headers:{
+      "Content-Type":"application/json"
+    },
+    body:JSON.stringify({
+      id:notificationData.id,
+      title:notificationData.title,
+      message:notificationData.desc,
+      link:notificationData.link
+    })
+  })
+  const result = await res.json();
+  setLoading(false)
+  if(result.success){
+    toast.success(result.message)
+  }
+  else{
+    toast.error(result.message)
+  }
+}
   return (
     <section className="w-full max-w-4xl mx-auto py-12 md:py-16 lg:py-20">
       <div className="px-4 md:px-6">
@@ -31,30 +92,26 @@ export default function Page() {
               <CardContent className="grid gap-6">
                 <div className="grid gap-2">
                   <Label htmlFor="subject">Subject</Label>
-                  <Input id="subject" placeholder="Enter notification subject" />
+                  <Input id="subject" placeholder="Enter notification Title" name="title" value={notificationData.title} onChange={handleChange}/>
+                </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="subject">Link</Label>
+                  <Input id="subject" placeholder="https://example.com" name="link" value={notificationData.link} onChange={handleChange} />
                 </div>
                 <div className="grid gap-2">
                   <Label htmlFor="message">Message</Label>
-                  <Textarea id="message" placeholder="Enter notification message" rows={5} />
+                  <Textarea id="message" name="desc" placeholder="Enter notification message" rows={5} onChange={handleChange} value={notificationData.desc} />
                 </div>
                 <div className="grid gap-2">
-                  <Label htmlFor="recipients">Recipients</Label>
-                  <Select id="recipients" multiple>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select recipients" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="student1">Student 1</SelectItem>
-                      <SelectItem value="student2">Student 2</SelectItem>
-                      <SelectItem value="student3">Student 3</SelectItem>
-                      <SelectItem value="student4">Student 4</SelectItem>
-                      <SelectItem value="student5">Student 5</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <Label htmlFor="id">Recipients</Label>
+                  <select id="id" name="id" onChange={handleChange} value={notificationData.id} className="border-2 border-gray-600 p-2 rounded">
+                    <option value="">Select Recipient</option>
+                     { allData&&allData.map((item)=>(<option value={item._id} key={item._id}>{item.title}</option>))}
+                  </select>
                 </div>
               </CardContent>
               <CardFooter className="flex justify-end">
-                <Button type="submit">Send Notification</Button>
+                <Button type="submit" onClick={handleSubmit}>{loading?"Sending .....":"Send Notification"}</Button>
               </CardFooter>
             </Card>
           </TabsContent>
