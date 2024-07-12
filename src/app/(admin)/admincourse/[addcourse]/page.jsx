@@ -12,6 +12,7 @@ import { Toaster,toast } from "sonner"
 import UploadModal from "@/utilities/Course/UploadModal"
 import Chat from "@/utilities/Ai/Chat"
 import axios from "axios"
+import MuxGetUrlFunc from "@/app/server/Mux"
 import {
   Dialog,
   DialogContent,
@@ -282,28 +283,11 @@ const uploadvideo = async()=>{
     return
   }
   try {
-    const upload = await axios.post(
-      'https://api.mux.com/video/v1/uploads',
-      {
-        "new_asset_settings": {
-    "playback_policy": [
-      "public"
-    ],
-    "max_resolution_tier": "1080p",
-    "encoding_tier": "baseline"
-  },
-  "cors_origin": "*"
-      },
-      {
-        auth: {
-          username: process.env.NEXT_PUBLIC_MUX_TOKEN_ID,
-          password: process.env.NEXT_PUBLIC_MUX_TOKEN_SECRET,
-        },
-      }
-    );
-
-    const uploadUrl = upload.data.data.url;
+    const [uploadUrl,upload] = await MuxGetUrlFunc();
     setUploadModal(true)
+    // console.log('upload data:',upload)
+    // setUploadModal(true)
+    // let UploadUrl = upload.data.data.url
     const uploadVideo = await axios.put(uploadUrl, video, {
       headers: {
         'Content-Type': 'multipart/form-data',
@@ -320,7 +304,7 @@ const uploadvideo = async()=>{
     console.log('upload data asset:',upload)
      console.log('Video uploaded asset:', uploadVideo);
 
-    const assetId = upload.data.data.id;
+    const assetId = upload;
     console.log('Asset ID:', assetId);
     const asset = await axios.get(
       `https://api.mux.com/video/v1//uploads/${assetId}`,
