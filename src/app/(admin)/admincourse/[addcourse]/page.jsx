@@ -45,6 +45,7 @@ import {
 
 import ProfielSpinner from "@/utilities/Spinner/ProfielSpinner"
 import { set } from "mongoose"
+import { FetchAsset, FetchAssetDetails } from "@/app/server/FetchMux"
 export default function Component({params}) {
   //name
   const [courseName,setCourseName] = useState("")
@@ -306,31 +307,17 @@ const uploadvideo = async()=>{
 
     const assetId = upload;
     console.log('Asset ID:', assetId);
-    const asset = await axios.get(
-      `https://api.mux.com/video/v1//uploads/${assetId}`,
-      {
-        auth: {
-          username: process.env.NEXT_PUBLIC_MUX_TOKEN_ID,
-          password: process.env.NEXT_PUBLIC_MUX_TOKEN_SECRET,
-        },
-      }
-    );
+    const [asset,assetid] = await FetchAsset(upload);
+
     console.log("assest is upload  asset",asset)
 
-    setVideoId(asset.data.asset_id);
-    const assetdetails = await axios.get(
-      `https://api.mux.com/video/v1//assets/${asset.data.data.asset_id}`,
-      {
-        auth: {
-          username: process.env.NEXT_PUBLIC_MUX_TOKEN_ID,
-          password: process.env.NEXT_PUBLIC_MUX_TOKEN_SECRET,
-        },
-      }
-    );
-      updateondatabase(assetdetails.data.data.id,assetdetails.data.data.playback_ids[0].id);
-      setPlaybackid(assetdetails.data.data.playback_ids[0].id)
-      setVideoId(assetdetails.data.data.id)
-      setcreatecontentform({...createcontentform,videoid:assetdetails.data.data.id,playbackid:assetdetails.data.data.playback_ids[0].id})
+    setVideoId(asset);
+    //asset.data.data.asset_id
+  const [dataid,playbackid] =await FetchAssetDetails(assetid);
+      updateondatabase(dataid,playbackid);
+      setPlaybackid(playbackid)
+      setVideoId(dataid)
+      setcreatecontentform({...createcontentform,videoid:dataid,playbackid:playbackid})
   } catch (error) {
    toast.error("Something went wrong! try again later"+error)
   }

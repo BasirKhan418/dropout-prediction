@@ -19,6 +19,8 @@ import { CourseData } from "../../../../functions/Coursedata"
 import { Toaster,toast } from "sonner"
 import UploadModal from "@/utilities/Course/UploadModal"
 import ProfielSpinner from "@/utilities/Spinner/ProfielSpinner"
+import MuxGetUrlFunc from "@/app/server/Mux";
+import { FetchAsset,FetchAssetDetails } from "@/app/server/FetchMux";
 import axios from "axios"
 export default function Component() {
   const [selectedCategory, setSelectedCategory] = useState(null)
@@ -133,66 +135,35 @@ export default function Component() {
         }
         else{
         try {
-          const upload = await axios.post(
-            'https://api.mux.com/video/v1/uploads',
-            {
-              "new_asset_settings": {
-          "playback_policy": [
-            "public"
-          ],
-          "max_resolution_tier": "1080p",
-          "encoding_tier": "baseline"
-        },
-        "cors_origin": "*"
-            },
-            {
-              auth: {
-                username: process.env.NEXT_PUBLIC_MUX_TOKEN_ID,
-                password: process.env.NEXT_PUBLIC_MUX_TOKEN_SECRET,
-              },
-            }
-          );
+          const [uploadUrl,upload] = await MuxGetUrlFunc();
+    setUploadModal(true)
+    // console.log('upload data:',upload)
+    // setUploadModal(true)
+    // let UploadUrl = upload.data.data.url
+    const uploadVideo = await axios.put(uploadUrl, video, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+      onUploadProgress: (progressEvent) => {
+        const { loaded, total } = progressEvent;
+        const percentCompleted = Math.floor((loaded * 100) / total);
+        setUploadProgress(percentCompleted);
+        console.log('Upload progress:', percentCompleted);
+      },
       
-          const uploadUrl = upload.data.data.url;
-          setUploadModal(true)
-          const uploadVideo = await axios.put(uploadUrl, video, {
-            headers: {
-              'Content-Type': 'multipart/form-data',
-            },
-            onUploadProgress: (progressEvent) => {
-              const { loaded, total } = progressEvent;
-              const percentCompleted = Math.floor((loaded * 100) / total);
-              setUploadProgress(percentCompleted);
-              console.log('Upload progress:', percentCompleted);
-            },
-            
-          });
-         
-          console.log('upload data asset:',upload)
-           console.log('Video uploaded asset:', uploadVideo);
-      
-          const assetId = upload.data.data.id;
-          console.log('Asset ID:', assetId);
-          const asset = await axios.get(
-            `https://api.mux.com/video/v1//uploads/${assetId}`,
-            {
-              auth: {
-                username: process.env.NEXT_PUBLIC_MUX_TOKEN_ID,
-                password: process.env.NEXT_PUBLIC_MUX_TOKEN_SECRET,
-              },
-            }
-          );
-          console.log("assest is upload  asset",asset)
-          const assetdetails = await axios.get(
-            `https://api.mux.com/video/v1//assets/${asset.data.data.asset_id}`,
-            {
-              auth: {
-                username: process.env.NEXT_PUBLIC_MUX_TOKEN_ID,
-                password: process.env.NEXT_PUBLIC_MUX_TOKEN_SECRET,
-              },
-            }
-          );
-          updateondatabase(assetdetails.data.data.id,assetdetails.data.data.playback_ids[0].id);
+    });
+   
+    console.log('upload data asset:',upload)
+     console.log('Video uploaded asset:', uploadVideo);
+
+    const assetId = upload;
+    console.log('Asset ID:', assetId);
+    const [asset,assetid] = await FetchAsset(upload);
+
+    console.log("assest is upload  asset",asset)
+    //asset.data.data.asset_id
+  const [dataid,playbackid] =await FetchAssetDetails(assetid);
+      updateondatabase(dataid,playbackid);
         } catch (error) {
          toast.error("Something went wrong! try again later"+error)
         }
