@@ -65,13 +65,11 @@ const validatefun = async()=>{
      else{
        setUserdata(null)
        toast.error(res.message)
-       router.push("/login")
      }
   }
   catch(err){
    setUserdata(null)
    toast.error("Something went wrong! try again later")
-   router.push("/login")
   }
 
 }
