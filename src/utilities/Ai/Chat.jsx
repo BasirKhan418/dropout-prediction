@@ -109,7 +109,6 @@ const Chat = ({ aiopen, setaiopen }) => {
           <div className="flex flex-col h-full w-full bg-background">
             <header className="flex items-center gap-4 px-6 py-4 border-b bg-card">
               <Avatar className="w-10 h-10 border">
-                <AvatarImage src="/placeholder-user.jpg" />
                 <AvatarFallback>NXT</AvatarFallback>
               </Avatar>
               <div>

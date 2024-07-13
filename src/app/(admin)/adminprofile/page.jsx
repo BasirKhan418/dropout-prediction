@@ -59,7 +59,6 @@ validatesFunc(localStorage.getItem("dilmsadmintoken"))
           <div className="bg-slate-900 p-8 rounded-t-lg md:rounded-t-none md:rounded-l-lg md:w-1/3">
             <div className="flex flex-col items-center">
               <Avatar className="h-24 w-24 mb-4">
-                <AvatarImage src="/placeholder-user.jpg" />
                 <AvatarFallback>{avname}</AvatarFallback>
               </Avatar>
               <h2 className="text-2xl font-bold text-primary-foreground mb-2">{data&&data[0].name}</h2>

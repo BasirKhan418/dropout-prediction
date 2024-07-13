@@ -183,7 +183,7 @@ setTimeout(()=>{
             </CardHeader>
             <CardContent>
               <div className="grid gap-4">
-                {data&&data.map((item)=>(<div className="flex items-center justify-between">
+                {data&&data.map((item,index)=>(<div className="flex items-center justify-between" key={index}>
                   <div className="flex items-center gap-2">
                     <Image src={item.Regdomain.img} width="40" height="40" className="rounded-lg" alt="Course Thumbnail" />
                     <div>
@@ -208,7 +208,7 @@ setTimeout(()=>{
             </CardHeader>
             <CardContent>
              <div className="grid gap-4">
-             { allAssignment&&allAssignment.slice(0,3).map((item)=>(<div className="flex items-center justify-between">
+             { allAssignment&&allAssignment.slice(0,3).map((item,index)=>(<div className="flex items-center justify-between" key={index}>
                   <div className="flex items-center gap-2">
                     <div className="rounded-lg bg-muted p-2 text-2xl">
                       <ClipboardIcon className="w-5 h-5" />

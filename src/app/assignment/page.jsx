@@ -5,8 +5,38 @@ import Link from 'next/link'
 import useAuth from '../../../hooks/useAuth'
 import HomePageSkl from '@/utilities/skeleton/HomePageSkl'
 const Page = () => {
-  const [data,message,loading] = useAuth();
-  console.log(data,message,loading)
+  const [data,setData] = useState(null);
+  const [loading,setLoading] = useState(false);
+ 
+  const validatefun = async()=>{
+     try{
+         setLoading(true);
+         const response = await fetch("/api/homeauth",{
+          method:"POST",
+          headers:{
+            "content-type":"application/json",
+            "token":localStorage.getItem("dilmstoken")
+          }
+         })
+        const res = await response.json();
+          setLoading(false);
+        if(res.success){
+        setData(res.data);
+       
+        }
+        else{
+          console.log(res.message)
+        }
+     }
+     catch(err){
+       setLoading(false);
+       
+     }
+   
+  }
+  useEffect(()=>{
+ validatefun();
+  },[])
   const [progress,setProgress] = useState(0)
   //get course completion progress//
   const UpdateandGetProgress = async(id,crid)=>{

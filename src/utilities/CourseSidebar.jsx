@@ -45,7 +45,8 @@ const validatefun = async()=>{
       })
      const res = await response.json();
      if(res.success){
-     setUserdata(res.data);
+      console.log("res is from res.data ",res.data)
+    setUserdata(res.data)
      let crcmp = res.data[0].crcmp;
      weeksdata.map((item)=>{
       let a = item.content.filter((item)=>item.name==crcmp[crcmp.length-1].name)
@@ -65,10 +66,11 @@ const validatefun = async()=>{
      else{
        setUserdata(null)
        toast.error(res.message)
+       console.log(res.message)
      }
   }
   catch(err){
-   setUserdata(null)
+   console.log(err)
   }
 
 }
@@ -83,21 +85,18 @@ const validatefunGet = async()=>{
        }
       })
      const res = await response.json();
+     console.log("res is ",res)
      if(res.success){
      setUserdata(res.data);
     
      }
      else{
-       setUserdata(null)
        toast.error(res.message)
-       router.push("/login")
      }
   }
   catch(err){
     setLoading(false);
-   setUserdata(null)
    toast.error("Something went wrong! try again later")
-   router.push("/login")
   }
 
 }
@@ -234,6 +233,7 @@ setAllComment([])
 
     return `${hours}:${minutes} ${period}`;
   };
+  console.log("userdata is ",userdata)
   return (
     <>
       <Toaster position='top-center' expand={false} />
@@ -319,7 +319,7 @@ setAllComment([])
             </div>
           </div>
           <Accordion type="single" collapsible value={menuWeek} onValueChange={setMenuWeek}>
-            {weeksdata&&weeksdata.map((item,weekindex)=>(<AccordionItem value={item.name} >
+            {weeksdata&&weeksdata.map((item,weekindex)=>(<AccordionItem value={item.name} key={weekindex}>
               <AccordionTrigger className="flex items-center justify-between" >
                 <div className="flex items-center gap-2">
                   <FolderIcon className="h-5 w-5" />
@@ -332,7 +332,7 @@ setAllComment([])
               </AccordionTrigger>
               <AccordionContent>
                 <div className="grid gap-2 pl-4">
-                  {item.content.map((item,index)=>(<>
+                  {item.content.map((item,index)=>(<div key={index}>
                  { item.type=="video"&&<Link
                     href="#"
                     key={index}
@@ -450,7 +450,7 @@ setAllComment([])
                     <span>{item.name}</span>
                   </Link>}
                   
-                  </>))}
+                  </div>))}
                   
                 
                 </div>
@@ -473,10 +473,10 @@ setAllComment([])
             <p className=" text-sm text-gray-700 font-medium mt-10 leading-6">
               {alldata&&alldata.desc}
             </p>
-            <p className=" text-sm text-gray-700 font-medium mt-2 leading-6">
+            <div className=" text-sm text-gray-700 font-medium mt-2 leading-6">
            { alldata.skills&&alldata.skills.split(",").map((item,index)=>(<Badge variant="outline" className="mx-2 my-2 " key={index}>{item}  </Badge>))}
 
-            </p>
+            </div>
             <div className="mt-8">
               <button
                 className="inline-flex items-center justify-center rounded-md bg-primary px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-primary/90 focus:outline-none focus:ring-1 focus:ring-primary focus:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 my-2"
@@ -544,7 +544,7 @@ setAllComment([])
            {activeFolder === "assignment" && (
            <>
              <div className={`${isopen?"sm:absolute sm:left-80":""} `}>
-              <UserAssignment id={crid} userid={userdata[0]._id}/>
+              <UserAssignment id={crid} userid={userdata&&userdata[0]._id}/>
              </div>
            </>
           )}

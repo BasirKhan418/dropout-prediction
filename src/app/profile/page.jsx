@@ -126,7 +126,6 @@ setPostLoading(false);
         <div className="bg-background rounded-lg p-6 shadow-sm">
           <div className="flex flex-col items-center gap-4">
             <Avatar className="w-24 h-24">
-              <AvatarImage src="/placeholder-user.jpg" />
               <AvatarFallback>{av}</AvatarFallback>
             </Avatar>
             <div className="text-center space-y-1">
@@ -168,7 +167,7 @@ setPostLoading(false);
               </Link>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {data&&data.map((item)=>(<Card className="p-4">
+              {data&&data.map((item,index)=>(<Card className="p-4" key={index}>
 
                 <div className="flex items-center justify-between relative">
                
