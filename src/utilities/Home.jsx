@@ -35,11 +35,28 @@ const fetchAllSubmittedAssignment = async(pendata,id,uid)=>{
   const data = await res.json()
   setLoading(false)
   if(data.success){
-    let submitted = data.data&&data.data.filter((item)=>item.status=="submitted")
-    let evaluated = data.data&&data.data.filter((item)=>item.status=="evaluated")
-  let pending = pendata&&data.data&&pendata.filter((item)=>!submitted.find((item2)=>item2.asid._id==item._id)&&!evaluated.find((item2)=>item2.asid._id==item._id))
-  setAssignment(pending.length)
-  setAllAssignment(data.data)
+// Check if data.data exists and filter submitted and evaluated items
+let submitted = data.data && data.data.filter((item) => item.status === "submitted");
+let evaluated = data.data && data.data.filter((item) => item.status === "evaluated");
+
+console.log('Submitted:', submitted);
+console.log('Evaluated:', evaluated);
+
+// Filter only pending data using pendata
+let pending = pendata && pendata.filter((item) => {
+  let isSubmitted = submitted && submitted.find((item2) => item2.asid && item2.asid._id === item._id);
+  let isEvaluated = evaluated && evaluated.find((item2) => item2.asid && item2.asid._id === item._id);
+  return !isSubmitted && !isEvaluated;
+});
+
+console.log('Pending:', pending);
+
+// Set assignment count and all assignments
+setAssignment(pending ? pending.length : 0);
+setAllAssignment(pending);
+
+
+    
   }
   else{
     //
@@ -214,8 +231,8 @@ setTimeout(()=>{
                       <ClipboardIcon className="w-5 h-5" />
                     </div>
                     <div>
-                      <div className="font-medium">{item.asid.title}</div>
-                      <div className="text-xs text-muted-foreground">Due: {new Date(item.asid.duedate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</div>
+                      <div className="font-medium">{item.title}</div>
+                      <div className="text-xs text-muted-foreground">Due: {new Date(item.duedate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</div>
                     </div>
                   </div>
                   <div className="text-xs text-muted-foreground">Pending</div>
