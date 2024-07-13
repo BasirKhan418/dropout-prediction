@@ -30,7 +30,7 @@ export const POST= async(req,res)=>{
       //deleting previous otp if exists
     await Otp.deleteOne({email:reqdata.email});
     //generating otp
-    let otp = Math.floor(Math.random()*1000000);
+    let otp = Math.floor(100000 + Math.random() * 900000);
     //sending otp to email
     await Otp.create({email:reqdata.email,otp:otp});
     //sending otp to email
