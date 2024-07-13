@@ -115,6 +115,10 @@ const handlecreatecontentformchnage = (e)=>{
 }
 //handlesubmits
 const handlecreateweeksubmit = ()=>{
+  if(createweekform.name=="",createweekform.type=="",createweekform.description==""){
+    toast.error("Please fill all the fields")
+    return;
+  }
   setWeeks([...weeks,createweekform])
   setcreateweek(false)
   setcreateweekform({name:"",type:"",description:"",content:[]})
@@ -129,6 +133,10 @@ setcreateweek(true)
 }
 //update submit
 const handleupdatesubmit = ()=>{
+  if(createweekform.name=="",createweekform.type=="",createweekform.description==""){
+    toast.error("Please fill all the fields")
+    return;
+  }
   let temp = weeks
   temp[index]=createweekform
   setWeeks([...temp])
@@ -139,6 +147,10 @@ const handleupdatesubmit = ()=>{
 }
 //content submit form
 const handlecreatecontentsubmit = ()=>{
+  if(createcontentform.name=="",createcontentform.type=="",createcontentform.description==""){
+    toast.error("Please fill all the fields . ")
+    return;
+  }
   console.log(createcontentform)
   let temp = weeks
   temp[index].content.push(createcontentform)
@@ -178,6 +190,7 @@ else{
 }
 //update content
 const updatecontent = (index,indexi)=>{
+  
   setupdate(true)
   setindex(indexi)
   setweekindex(index)
@@ -185,6 +198,10 @@ const updatecontent = (index,indexi)=>{
   setcreatecontentbool(true)
 }
 const updatecontentmodal=()=>{
+  if(createcontentform.name=="",createcontentform.type=="",createcontentform.description==""){
+    toast.error("Please fill all the fields . ")
+    return;
+  }
   const temp = weeks
   temp[weekindex].content[index]=createcontentform
   setWeeks([...temp])

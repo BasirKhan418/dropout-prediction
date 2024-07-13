@@ -96,13 +96,13 @@ const handleCommentSubmit = async()=>{
       <Button variant="ghost" size="icon" onClick={handleDislikeClick}>
         {dislike ? <AiFillDislike className="w-6 h-6" /> : <AiTwotoneDislike className="w-6 h-6" />}
       </Button>
-            <Link href={`${content.videonotes}`} target="_blank">
+            <Link href={`${content.videonotes&&content.videonotes}`} target="_blank">
             <Button variant="ghost" size="icon">
               <FileText className="w-5 h-5" />
             </Button>
             </Link> 
             
-           <Link href={`${content.slide}`} target="_blank"><Button>Slides</Button></Link> 
+           <Link href={`${content.slide&&content.slide}`} target="_blank"><Button>Slides</Button></Link> 
           </div>
         </div>
       </div>

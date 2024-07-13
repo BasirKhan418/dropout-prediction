@@ -52,7 +52,6 @@ const useFcmToken = () => {
 
     if (!token) {
       if (retryLoadToken.current >= 3) {
-        alert("Unable to load token, refresh the browser");
         console.info(
           "%cPush Notifications issue - unable to load token after 3 retries",
           "color: green; background: #c7c7c7; padding: 8px; font-size: 20px"

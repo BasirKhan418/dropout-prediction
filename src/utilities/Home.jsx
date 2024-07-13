@@ -194,7 +194,7 @@ setTimeout(()=>{
           <Card>
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <CardTitle className="text-sm font-medium">Courses</CardTitle>
-              <Link href="#" className="text-sm text-primary" prefetch={false}>
+              <Link href="/course" className="text-sm text-primary" prefetch={false}>
                 View All
               </Link>
             </CardHeader>
