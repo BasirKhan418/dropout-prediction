@@ -63,6 +63,7 @@ export const POST = async (req, res) => {
         }
         
         if(userdata==null){
+            console.log("userdata is ",userdata);
             return NextResponse.json({success:false,message:"Course Progress Data not found",status:404});
         }
         return 
@@ -71,6 +72,6 @@ export const POST = async (req, res) => {
     }
     catch(err){
         return NextResponse.json({success:false,message:"Something went wrong! in updating course progress",status:500});
-        console.log(err);
+        
     }
 }

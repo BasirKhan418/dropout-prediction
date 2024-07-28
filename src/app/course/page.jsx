@@ -2,9 +2,7 @@
 import React, { useEffect, useState } from 'react'
 import Card from '@/utilities/Course/Card'
 import Link from 'next/link'
-import useAuth from '../../../hooks/useAuth'
 import HomePageSkl from '@/utilities/skeleton/HomePageSkl'
-import Head from 'next/head'
 
 const Page = () => {
   const [data,setData] = useState(null);
@@ -39,7 +37,6 @@ const Page = () => {
   useEffect(()=>{
  validatefun();
   },[])
-  const [progress,setProgress] = useState(0)
   //get course completion progress//
   const UpdateandGetProgress = async(id,crid)=>{
     try{
@@ -51,7 +48,6 @@ const Page = () => {
         }
       })
       const result = await res.json();
-      setProgress(result.progress)
     }
     catch(err){
       console.log(err)
@@ -61,14 +57,22 @@ const Page = () => {
   //useEffect
   useEffect(()=>{
     if(data&&data[0]){
-      UpdateandGetProgress(data[0]._id,data[0].Regdomain._id)
+      if(data.length==1){
+        UpdateandGetProgress(data[0]._id,data[0].Regdomain._id)
+      }
+      else{
+        data.map((item)=>{
+          UpdateandGetProgress(item._id,item.Regdomain._id)
+        })
+      }
+     
     }
   },[data])
   return (
     <>
    { loading?<HomePageSkl/>:<div className='flex justify-start items-center flex-wrap '>
     {data&&data.map((item)=>(
-        <Link href={`/course/detail/${item.Regdomain._id}`} key={item._id}><Card title={item.Regdomain.title} description={item.Regdomain.desc} duration={item.Regdomain.duration} validity={"1"} img={item.Regdomain.img} skills={item.Regdomain.skills} isadmin={false} progress={progress==null?0:progress}/></Link>
+        <Link href={`/course/detail/${item.Regdomain._id}`} key={item._id}><Card title={item.Regdomain.title} description={item.Regdomain.desc} duration={item.Regdomain.duration} validity={"1"} img={item.Regdomain.img} skills={item.Regdomain.skills} isadmin={false} progress={item.progress&&item.progress==null?0:item.progress}/></Link>
       ))}
       
     </div>}

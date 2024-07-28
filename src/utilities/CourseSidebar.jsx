@@ -58,6 +58,7 @@ export default function CourseSidebar({
   const [currentWeekindex, setCurrentWeekindex] = useState(0);
   const [currentContentindex, setCurrentContentindex] = useState(-1);
   const [userdata, setUserdata] = useState(null);
+  const [progress, setProgress] = useState(0);
   //authentication
   const validatefun = async () => {
     try {
@@ -72,7 +73,9 @@ export default function CourseSidebar({
       if (res.success) {
         console.log("res is from res.data ", res.data);
         setUserdata(res.data);
-        let crcmp = res.data[0].crcmp;
+        let resdata = res.data.filter((item)=>item.Regdomain._id==crid)[0];
+        let crcmp = resdata && resdata.crcmp;
+        setProgress(resdata.progress);
         weeksdata.map((item) => {
           let a = item.content.filter(
             (item) => item.name == crcmp[crcmp.length - 1].name
@@ -143,9 +146,10 @@ export default function CourseSidebar({
   //
   // get and if possible update progress
   const UpdateandGetProgress = async () => {
+    const data = userdata && userdata.filter((item) => item.Regdomain._id == crid);
     try {
       const res = await fetch(
-        `/api/progress?id=${userdata[0]._id}&&crid=${crid}`,
+        `/api/progress?id=${data[0]._id}&&crid=${crid}`,
         {
           method: "GET",
           headers: {
@@ -161,6 +165,7 @@ export default function CourseSidebar({
   };
   //endded
   const UpdateProgress = async () => {
+    const data = userdata && userdata.filter((item) => item.Regdomain._id == crid);
     if (content.name == null) {
       return;
     }
@@ -171,7 +176,7 @@ export default function CourseSidebar({
         token: localStorage.getItem("dilmstoken"),
       },
       body: JSON.stringify({
-        id: userdata[0]._id,
+        id: data[0]._id,
         crid: crid,
         data: { name: content.name },
       }),
@@ -249,8 +254,8 @@ export default function CourseSidebar({
     if (!userdata || !userdata[0] || !userdata[0].crcmp) {
       return false;
     }
-
-    const exists = userdata[0].crcmp.some((item) => item.name === name);
+   let data = userdata && userdata.filter((item) => item.Regdomain._id == crid)[0];
+    const exists = data.crcmp.some((item) => item.name === name);
     return exists;
   };
   //
@@ -409,10 +414,10 @@ export default function CourseSidebar({
 
               <div className="flex items-center gap-2">
                 <span className="text-sm font-medium">
-                  {userdata && userdata[0].progress}%
+                  {progress==null?0:progress }%
                 </span>
                 <Progress
-                  value={userdata && userdata[0].progress}
+                  value={progress==null?0:progress}
                   className="w-32"
                 />
               </div>
