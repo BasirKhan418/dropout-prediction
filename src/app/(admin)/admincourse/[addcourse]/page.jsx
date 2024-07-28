@@ -49,6 +49,7 @@ import { FetchAsset, FetchAssetDetails } from "@/app/server/FetchMux"
 export default function Component({params}) {
   //name
   const [courseName,setCourseName] = useState("")
+  const [indexing,setindexing] = useState(0)
   //useEffect
   const fetchallcoursedata = async()=>{
 try{
@@ -64,6 +65,13 @@ const result = await res.json()
 setLoading(false)
 console.log(result)
 setWeeks(result.data.content)
+//calculating the content indexing
+let temp = 0;
+result.data.content&&result.data.content.map((item)=>{
+temp+=item.content.length;
+})
+setindexing(temp+1)
+//end
 setCourseName(result.data.title)
 toast.success(result.message)
 }
@@ -94,7 +102,8 @@ fetchallcoursedata()
     description:"",
     link:"",
     type:"",
-    comment:[]
+    comment:[],
+    index:indexing
   })
   const [uploadModal,setUploadModal] = useState(false)
   const [createweekform,setcreateweekform] = useState({
@@ -151,13 +160,23 @@ const handlecreatecontentsubmit = ()=>{
     toast.error("Please fill all the fields . ")
     return;
   }
-  console.log(createcontentform)
+  let ispresent = false
+  weeks.map((item)=>{
+    if(item.content.find((item)=>item.index==createcontentform.index)){
+      ispresent = true
+    }
+  })
+  if(ispresent){
+    toast.error("Index already present in the another content . Please Select another content index,Hint:- Index should be unique and it is defined for the content order.")
+    return;
+  }
   let temp = weeks
   temp[index].content.push(createcontentform)
   setWeeks([...temp])
   setcreatecontentbool(false)
   setindex("")
-  setcreatecontentform({name:"",type:"",description:"",link:""})
+  setcreatecontentform({name:"",type:"",description:"",link:"",index:indexing+1})
+  setindexing(indexing+1)
 
 }
 //update content submit
@@ -166,7 +185,7 @@ const handleupdatecontentsubmit = ()=>{
   temp[index].content.push(createcontentform)
   setWeeks([...temp])
   setcreatecontentbool(false)
-  setcreatecontentform({name:"",type:"",description:"",link:""})
+  setcreatecontentform({name:"",type:"",description:"",link:"",index:indexing+1})
   setupdate(false)
   setindex("")
 
@@ -202,12 +221,32 @@ const updatecontentmodal=()=>{
     toast.error("Please fill all the fields . ")
     return;
   }
+  let ispresent = false
+  weeks.map((item)=>{
+    if(item.content.find((item)=>item.index==createcontentform.index&&item.index!=weeks[weekindex].content[index].index)){
+      ispresent = true
+    }
+  })
+
+ // Assuming weeks is your state array and setWeeks is the state updater function
+  if(ispresent){
+    toast.error("Index already present in the another content . Please Select another content index,Hint:- Index should be unique and it is defined for the content order.")
+    return;
+  }
   const temp = weeks
   temp[weekindex].content[index]=createcontentform
+
+  let data = temp[weekindex].content.slice().sort((a, b) => {
+    const indexA = a.index ? Number(a.index) : Number.MAX_SAFE_INTEGER;
+    const indexB = b.index ? Number(b.index) : Number.MAX_SAFE_INTEGER;
+    return indexA - indexB;
+  });
+  temp[weekindex].content = data;
   setWeeks([...temp])
   setcreatecontentbool(false)
   setupdate(false)
-  setcreatecontentform({name:"",type:"",description:"",link:""})
+  setcreatecontentform({name:"",type:"",description:"",link:"",index:indexing+1})
+  setindexing(indexing+1)
   setindex("")
   setweekindex("")
 }
@@ -490,7 +529,7 @@ const uploadvideo = async()=>{
         <X onClick={()=>{
           setcreatecontentbool(false)
           setupdate(false)
-          setcreatecontentform({name:"",type:"",description:"",link:""})
+          setcreatecontentform({name:"",type:"",description:"",link:"",index:indexing})
           setindex("")
           setweekindex("")
           }}/>
@@ -665,6 +704,18 @@ const uploadvideo = async()=>{
               value={createcontentform.videonotes}
               className="col-span-3"
               placeholder="Add Note Link Here..."
+            />
+          </div>}
+          {<div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="videonotes" className="text-right">
+              Content Index
+            </Label>
+            <Input
+              id="index"
+              onChange={handlecreatecontentformchnage}
+              value={createcontentform.index}
+              className="col-span-3"
+              placeholder="Add index here..."
             />
           </div>}
         </div>
