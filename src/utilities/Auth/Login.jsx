@@ -81,7 +81,7 @@ console.log(otp);
           <div className="grid gap-2 text-center">
           <div className="flex justify-center items-center my-4">
       <img
-        src="https://res.cloudinary.com/dst73auvn/image/upload/v1720798286/Newlogodi_xxx9t7.png" 
+        src="https://d1vamwx4eg4oha.cloudfront.net/diassets/logowithname.png" 
         alt="My Image"
       className="lg:h-48 lg:w-48 lg:absolute w-48 h-48"
       />
@@ -154,7 +154,7 @@ console.log(otp);
       </div>
       <div className="hidden bg-muted lg:block md:block">
         <Image
-          src="https://res.cloudinary.com/dst73auvn/image/upload/v1720797609/lms_vfk9oh.png"
+          src="https://d1vamwx4eg4oha.cloudfront.net/diassets/lms.png"
           alt="Image"
           width="1920"
           height="1080"

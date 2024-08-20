@@ -53,7 +53,7 @@ export function Sidebar({children}) {
             <Link href="/" className="flex items-center gap-2 font-semibold">
               <div>
                 <Image 
-                  src="https://res.cloudinary.com/dst73auvn/image/upload/v1718998002/ljyzihnrzwfd61veakyb.png" 
+                  src="https://d1vamwx4eg4oha.cloudfront.net/diassets/logo.png" 
                   alt="My Image"
                   width={25} // Specify the width of the image
                   height={25} // Specify the height of the image
@@ -142,7 +142,7 @@ export function Sidebar({children}) {
             <Link href="/" className="flex items-center gap-2 font-semibold mx-2 mb-4">
               <div>
                 <Image 
-                  src="https://res.cloudinary.com/dst73auvn/image/upload/v1718998002/ljyzihnrzwfd61veakyb.png" 
+                  src="https://d1vamwx4eg4oha.cloudfront.net/diassets/logo.png" 
                   alt="My Image"
                   width={25} // Specify the width of the image
                   height={25} // Specify the height of the image

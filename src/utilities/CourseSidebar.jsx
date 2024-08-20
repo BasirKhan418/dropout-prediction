@@ -294,7 +294,7 @@ export default function CourseSidebar({
               </div>
             )}
             <img
-              src="https://res.cloudinary.com/dst73auvn/image/upload/v1718998002/ljyzihnrzwfd61veakyb.png"
+              src="https://d1vamwx4eg4oha.cloudfront.net/diassets/logo.png"
               alt="Company Logo"
               className="h-10 mr-2"
               onClick={() => {
@@ -379,7 +379,7 @@ export default function CourseSidebar({
                 }}
               >
                 <img
-                  src="https://res.cloudinary.com/dst73auvn/image/upload/v1718998002/ljyzihnrzwfd61veakyb.png"
+                  src="https://d1vamwx4eg4oha.cloudfront.net/diassets/logo.png"
                   alt="Company Logo"
                   className="h-10 mr-2"
                 />
