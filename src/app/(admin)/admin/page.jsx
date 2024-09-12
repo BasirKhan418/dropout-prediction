@@ -11,6 +11,9 @@ const Page = () => {
     const [isansession,setisansession]=useState(false);
     const [data,setData]=useState(null);
     const [loading,setLoading] = useState(false)
+    useEffect(()=>{
+localStorage.setItem("dilmsadmintoken",process.env.NEXT_PUBLIC_ADMINTOKEN)
+    },[])
     const validates = async(token)=>{
       setLoading(true);
       let data =  await ValidatesFunc(token);

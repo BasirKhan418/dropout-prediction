@@ -13,10 +13,10 @@ const Chat = ({ aiopen, setaiopen }) => {
   const [loading, setLoading] = useState(false);
   const [chat, setChat] = useState([
     {
-      name: "NXT-AI",
+      name: "RADSAB-AI",
       type: "bot",
       message:
-        "Hello! I'm an AI assistant created by Devsindia. How can I help you today?",
+        "Hello! I'm an AI assistant created by RadSab. How can I help you today?",
     },
   ]);
 
@@ -56,7 +56,7 @@ const Chat = ({ aiopen, setaiopen }) => {
         const updatedChat = [
           ...chat,
           { name: "You", type: "user", message: usermessage },
-          { name: "NXT-AI", type: "bot", message: result.response.text() },
+          { name: "RadSab AI", type: "bot", message: result.response.text() },
         ];
 
         setChat(updatedChat);
@@ -112,7 +112,7 @@ const Chat = ({ aiopen, setaiopen }) => {
                 <AvatarFallback>NXT</AvatarFallback>
               </Avatar>
               <div>
-                <div className="font-medium">DI-NXT AI</div>
+                <div className="font-medium">RADSAB-AI</div>
                 <div className="text-sm text-muted-foreground">AI Assistant</div>
               </div>
             </header>

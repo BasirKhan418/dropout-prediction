@@ -148,8 +148,8 @@ setPostLoading(false);
                 <div className="text-muted-foreground">Your Rank</div>
               </div>
               <div className="bg-muted rounded-lg p-4 flex flex-col items-center">
-                <div className="text-4xl font-bold"> ₹{amount}</div>
-                <div className="text-muted-foreground">Tuition</div>
+                <div className="text-4xl font-bold"> {93}%</div>
+                <div className="text-muted-foreground">Progress</div>
               </div>
             </div>
           </div>

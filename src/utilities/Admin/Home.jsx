@@ -41,11 +41,11 @@ const Home = ({name}) => {
           </Card>
           <Card>
             <CardHeader>
-              <CardTitle>Total Products</CardTitle>
-              <CardDescription>The total products</CardDescription>
+              <CardTitle>Average Dropout Rates</CardTitle>
+              <CardDescription>The average dropout rate</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="text-4xl font-bold text-purple-500">42,356</div>
+              <div className="text-4xl font-bold text-purple-500">42%</div>
             </CardContent>
           </Card>
         </div>

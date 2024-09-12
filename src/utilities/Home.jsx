@@ -76,7 +76,7 @@ const fetchAllAssignment = async(id,uid)=>{
     fetchAllSubmittedAssignment(data.data,id,uid)
   }
   else{
-    toast.error(data.message)
+    
     console.log(data)
   }
 }
@@ -120,16 +120,9 @@ setData(res.data);
 fetchAllAssignment(res.data[0].Regdomain._id,res.data[0]._id);
 }
 else{
-toast.error(res.message);
 if(res.ansession){
-  setisansession(true);
-  setTimeout(()=>{
-router.push("/login");
-  },4000)
+ 
 }
-setTimeout(()=>{
-  router.push("/login");
-    },3000)
 }
 }
   useEffect(()=>{

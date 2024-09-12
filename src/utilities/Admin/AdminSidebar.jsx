@@ -25,13 +25,13 @@ export default function AdminSidebar({children}) {
         <Link href="/admin" className="flex items-center gap-2 font-semibold">
               <div>
                 <Image 
-                  src="https://res.cloudinary.com/dst73auvn/image/upload/v1718998002/ljyzihnrzwfd61veakyb.png" 
+                  src="https://d1vamwx4eg4oha.cloudfront.net/radsab.png" 
                   alt="My Image"
                   width={25} // Specify the width of the image
                   height={25} // Specify the height of the image
                 />
               </div>
-              <span className="">DevsIndia</span>
+              <span className="">RadSab</span>
             </Link>
         </div>
         <nav className="flex flex-col space-y-1 px-4 py-6">
@@ -101,13 +101,13 @@ export default function AdminSidebar({children}) {
                 <Link href="/" className="flex items-center gap-2 font-semibold mx-3">
               <div>
                 <Image 
-                  src="https://res.cloudinary.com/dst73auvn/image/upload/v1718998002/ljyzihnrzwfd61veakyb.png" 
+                  src="https://d1vamwx4eg4oha.cloudfront.net/radsab.png" 
                   alt="My Image"
                   width={25} // Specify the width of the image
                   height={25} // Specify the height of the image
                 />
               </div>
-              <span className="">DevsIndia</span>
+              <span className="">RadSab</span>
             </Link>
                   <Link
                     href="/admin"

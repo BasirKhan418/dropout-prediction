@@ -53,13 +53,13 @@ export function Sidebar({children}) {
             <Link href="/" className="flex items-center gap-2 font-semibold">
               <div>
                 <Image 
-                  src="https://d1vamwx4eg4oha.cloudfront.net/diassets/logo.png" 
+                  src="https://d1vamwx4eg4oha.cloudfront.net/radsab.png" 
                   alt="My Image"
                   width={25} // Specify the width of the image
                   height={25} // Specify the height of the image
                 />
               </div>
-              <span className="">DevsIndia</span>
+              <span className="">RadSab</span>
             </Link>
             <Button variant="outline" size="icon" className="ml-auto h-8 w-8">
               <Bell className="h-4 w-4" />
@@ -115,7 +115,7 @@ export function Sidebar({children}) {
               </CardHeader>
               <CardContent className="p-2 pt-0 md:p-4 md:pt-0">
                 <Button size="sm" className="w-full mb-2">
-                  <Link href="https://devsindia.in/student" target="_blank">
+                  <Link href="/course" target="_blank">
                     Browse Courses
                   </Link>
                 </Button>
@@ -142,13 +142,13 @@ export function Sidebar({children}) {
             <Link href="/" className="flex items-center gap-2 font-semibold mx-2 mb-4">
               <div>
                 <Image 
-                  src="https://d1vamwx4eg4oha.cloudfront.net/diassets/logo.png" 
+                  src="https://d1vamwx4eg4oha.cloudfront.net/radsab.png" 
                   alt="My Image"
                   width={25} // Specify the width of the image
                   height={25} // Specify the height of the image
                 />
               </div>
-              <span className="">DevsIndia</span>
+              <span className="">RadSab</span>
             </Link>
               <Link
                 href="/"
@@ -196,7 +196,7 @@ export function Sidebar({children}) {
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="p-2 pt-0 md:p-4 md:pt-0">
-                  <Link href="https://devsindia.in/student" target="_blank">
+                  <Link href="/course" target="_blank">
                     Browse Courses
                   </Link>
                   </CardContent>
@@ -227,7 +227,7 @@ export function Sidebar({children}) {
               <DropdownMenuLabel>My Account</DropdownMenuLabel>
               <DropdownMenuSeparator />
               <Link href={"/profile"}><DropdownMenuItem>Profile</DropdownMenuItem></Link>
-              <Link href={"https://www.devsindia.in/contact"} target="_blank"> <DropdownMenuItem>Support</DropdownMenuItem></Link>
+              <Link href={"mailto:aniketsubudhi00@gmail.com"} target="_blank"> <DropdownMenuItem>Support</DropdownMenuItem></Link>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={()=>{
                 setIsOpen(true)

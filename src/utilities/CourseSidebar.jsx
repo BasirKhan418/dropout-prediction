@@ -294,7 +294,7 @@ export default function CourseSidebar({
               </div>
             )}
             <img
-              src="https://d1vamwx4eg4oha.cloudfront.net/diassets/logo.png"
+              src="https://d1vamwx4eg4oha.cloudfront.net/radsab.png"
               alt="Company Logo"
               className="h-10 mr-2"
               onClick={() => {
@@ -302,7 +302,7 @@ export default function CourseSidebar({
               }}
             />
             <h1 className="text-xl font-bold text-gray-800 dark:text-gray-200">
-              DevsIndia
+              RadSab
             </h1>
           </div>
           <h2 className="text-md md:text-lg font-bold text-gray-800 dark:text-gray-400 mb-2 md:mb-0">
@@ -379,12 +379,12 @@ export default function CourseSidebar({
                 }}
               >
                 <img
-                  src="https://d1vamwx4eg4oha.cloudfront.net/diassets/logo.png"
+                  src="https://d1vamwx4eg4oha.cloudfront.net/radsab.png"
                   alt="Company Logo"
                   className="h-10 mr-2"
                 />
                 <h1 className="text-xl font-bold text-gray-800 dark:text-gray-200">
-                  DevsIndia
+                  RadSab
                 </h1>
               </div>
               {!isMenuOpen && (
