@@ -9,10 +9,6 @@ export const GET = async (req,res) => {
     const { searchParams } = new URL(req.url);
     const id = searchParams.get('id');
 try{
-    let data = AuthorizeMd(headerlist.get("token"));
-    if(!data){
-     return NextResponse.json({message:"You are not authorized to access this route",status:401,success:false})
-    }
     let videodata = await Videos.find({folderid:id});
     return NextResponse.json({data:videodata,message:"Videos loaded successfully",success:true})
 
@@ -27,10 +23,7 @@ export const POST = async (req,res) => {
     const reqdata = await req.json();
     console.log(reqdata);   
 try{
-    let data = AuthorizeMd(headerlist.get("token"));
-    if(!data){
-     return NextResponse.json({message:"You are not authorized to access this route",status:401,success:false})
-    }
+    
     let videodata = await Videos.find({folderid:reqdata.folderid});
     if(videodata.length>0){
         const newdata = await Videos.findOneAndUpdate(

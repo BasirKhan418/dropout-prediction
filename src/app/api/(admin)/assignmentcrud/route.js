@@ -13,10 +13,7 @@ export const GET = async (req, res) => {
   const id = searchParams.get('id');
 
   try {
-    let a = AuthorizeMd(headerList.get("token"));
-    if (!a) {
-      return NextResponse.json({ success: false, message: "You are not authorized to access this route", status: 401 });
-    }
+   
 
     let assdata = await SubmittedAssignments.find({ crid: id });
     if (!assdata) {
@@ -37,10 +34,7 @@ export const POST = async (req, res) => {
     const headerList = headers();
     let reqData = await req.json();
     try {
-      let a = AuthorizeMd(headerList.get("token"));
-      if (!a) {
-        return NextResponse.json({ success: false, message: "You are not authorized to access this route", status: 401 });
-      }
+      
       let upadate = await SubmittedAssignments.findByIdAndUpdate({_id:reqData.id},{marks:reqData.marks,status:"evaluated"},{new:true});
         return NextResponse.json({ success: true, message: "Data Updated SuccessFully", status: 200, data: upadate });
     } catch (err) {

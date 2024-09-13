@@ -9,11 +9,6 @@ export const GET = async (req, res) => {
     const { searchParams } = new URL(req.url);
     const id = searchParams.get('id');
 try{
-let a  = AuthorizeMd(headerlist.get("token"));
-console.log(a)
-if(!a){
-    return NextResponse.json({message:"Unauthorized route cant handle request",status: "401" });
-}
 let assignment = await Assignments.find({crid:id});
 return NextResponse.json({message:"Success fetched",status: "200",data:assignment ,success:true});
 }
@@ -26,11 +21,6 @@ export const POST = async (req, res) => {
     const headerlist = headers()
     const reqdata = await req.json();
     try{
-        let a  = AuthorizeMd(headerlist.get("token"));
-        console.log(a)
-        if(!a){
-            return NextResponse.json({message:"Unauthorized route cant handle request",status: "401" ,success:false});
-        }
         let addData = new Assignments(reqdata);
         await addData.save();
         return NextResponse.json({message:"Assignment added successfully",status: "200",success:true});
@@ -45,11 +35,6 @@ export const PUT = async (req, res) => {
     const headerlist = headers()
     const reqdata = await req.json();
     try{
-        let a  = AuthorizeMd(headerlist.get("token"));
-        console.log(a)
-        if(!a){
-            return NextResponse.json({message:"Unauthorized route cant handle request",status: "401" });
-        }
         let assignment = await Assignments.findByIdAndUpdate({_id:reqdata.id},reqdata,{new:true});
         return NextResponse.json({message:"Assignment updated successfully",status: "200",success:true});
         }
@@ -62,11 +47,6 @@ export const DELETE = async (req, res) => {
     const headerlist = headers()
     const reqdata = await req.json();
     try{
-        let a  = AuthorizeMd(headerlist.get("token"));
-        console.log(a)
-        if(!a){
-            return NextResponse.json({message:"Unauthorized route cant handle request",status: "401" });
-        }
         let assignment = await Assignments.findByIdAndDelete({_id:reqdata.id});
         return NextResponse.json({message:"Assignment deleted successfully",status: "200",success:true});
         }

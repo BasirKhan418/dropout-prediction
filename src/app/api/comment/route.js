@@ -9,10 +9,6 @@ const headerlist = headers();
 const { searchParams } = new URL(req.url);
 const id = searchParams.get('id');
 try{
-let a  = AuthorizeMd(headerlist.get("token"));
-if(!a){
-return NextResponse.json({message:"You are not authorized to access this route",status:401,success:false})
-}
 let data = await Comment.findOne({name:id});
 return NextResponse.json({data:data,message:"Comment loaded successfully",success:true})
 }
@@ -25,11 +21,6 @@ await ConnectDb();
 const headerlist = headers();
 const reqdata = await req.json();
 try{
-let a  = AuthorizeMd(headerlist.get("token"));
-if(!a){
-return NextResponse.json({message:"You are not authorized to access this route",status:401,success:false})
-
-}
 let data = await Comment.findOne({name:reqdata.name});
 if(data!=null){
 let newdata = await Comment.findOneAndUpdate({name:reqdata.name},{$push:{comment:reqdata.comment}},{new:true});

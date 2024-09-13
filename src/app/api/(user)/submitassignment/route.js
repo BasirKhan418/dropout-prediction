@@ -13,10 +13,7 @@ const crid = searchParams.get('crid')
 const userid = searchParams.get('userid')
 
 try{
-let a = AuthorizeMd(headerList.get("token"));
-if(!a){
-return NextResponse.json({success:false,message:"You are not authorized to access this route",status:401});
-}
+
 let asdata = await SubmittedAssignments.find({crid:crid,userid:userid});
 let aspop = await Assignments.populate(asdata, { path: "asid" });
 let realdata = await InternUser.populate(aspop, { path: "userid" });
@@ -32,10 +29,7 @@ export const POST = async (req, res) => {
     const headerList = headers();
     const reqdata = await req.json();
     try{
-    let a = AuthorizeMd(headerList.get("token"));
-    if(!a){
-    return NextResponse.json({success:false,message:"You are not authorized to access this route",status:401});
-    }
+    
     
     const {asid,crid,userid,response} = reqdata;
     let findd = await SubmittedAssignments.find({asid:asid,crid:crid,userid:userid});

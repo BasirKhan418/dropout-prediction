@@ -11,10 +11,6 @@ export const GET = async (req, res) => {
 const id = searchParams.get('id')
 const crid = searchParams.get('crid')
 try{
-let a = AuthorizeMd(headerList.get("token"));
-if(!a){
-return NextResponse.json({success:false,message:"You are not authorized to access this route",status:401});
-}
 let userdata= await InternUser.findOne({_id:id,Regdomain:crid});
 let coursedata = await InternDetails.populate(userdata,{path:"Regdomain"});
 if(coursedata==null){

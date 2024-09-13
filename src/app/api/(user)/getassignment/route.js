@@ -10,10 +10,7 @@ export const GET = async (req, res) => {
     const { searchParams } = new URL(req.url);
     const id = searchParams.get('id');
 try{
-let a = AuthorizeMd(headerlist.get("token"));
-if(!a){
-    return NextResponse.json({message:"Unauthorized route cant handle request",status: "401",success:false });
-}
+
 let assignment = await Assignments.find({_id:id});
 return NextResponse.json({message:"Successfully assignment fetched",status: "200",data:assignment ,success:true});
 }
@@ -25,10 +22,7 @@ export const POST = async (req, res) => {
     await ConnectDb()
     let headerlist = headers();
 try{
-let a = AuthorizeMd(headerlist.get("token"));
-if(!a){
-    return NextResponse.json({message:"Unauthorized route cant handle request",status: "401",success:false });
-}
+
 let assignment = await Assignments.find({_id:id});
 return NextResponse.json({message:"Successfully assignment fetched",status: "200",data:assignment ,success:true});
 }

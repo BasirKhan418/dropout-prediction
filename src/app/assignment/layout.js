@@ -1,8 +1,8 @@
 import React from 'react'
 export const metadata = {
-    title: "Manage Your Assignments Efficiently | DevsIndia LMS",
-    description: "Stay organized with our Assignments page on DevsIndia LMS. Submit and track your assignments effortlessly to keep up with your learning goals.",
-    keywords: "assignments, manage assignments, DevsIndia assignments, submit assignments, track assignments, student assignments"
+    title: "Manage Your Assignments Efficiently | RadSab LMS",
+    description: "Stay organized with our Assignments page on RadSab LMS. Submit and track your assignments effortlessly to keep up with your learning goals.",
+    keywords: "assignments, manage assignments, RadSab assignments, submit assignments, track assignments, student assignments"
   };
   
   
