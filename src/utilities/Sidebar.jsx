@@ -53,13 +53,13 @@ export function Sidebar({children}) {
             <Link href="/" className="flex items-center gap-2 font-semibold">
               <div>
                 <Image 
-                  src="https://d1vamwx4eg4oha.cloudfront.net/radsab.png" 
+                  src="https://d1vamwx4eg4oha.cloudfront.net/dropguard.png" 
                   alt="My Image"
-                  width={25} // Specify the width of the image
-                  height={25} // Specify the height of the image
+                  width={35} // Specify the width of the image
+                  height={35} // Specify the height of the image
                 />
               </div>
-              <span className="">RadSab</span>
+              <span className="">DropGuard</span>
             </Link>
             <Button variant="outline" size="icon" className="ml-auto h-8 w-8">
               <Bell className="h-4 w-4" />
@@ -142,13 +142,13 @@ export function Sidebar({children}) {
             <Link href="/" className="flex items-center gap-2 font-semibold mx-2 mb-4">
               <div>
                 <Image 
-                  src="https://d1vamwx4eg4oha.cloudfront.net/radsab.png" 
+                  src="https://d1vamwx4eg4oha.cloudfront.net/dropguard.png" 
                   alt="My Image"
-                  width={25} // Specify the width of the image
-                  height={25} // Specify the height of the image
+                  width={35} // Specify the width of the image
+                  height={35} // Specify the height of the image
                 />
               </div>
-              <span className="">RadSab</span>
+              <span className="">DropGuard</span>
             </Link>
               <Link
                 href="/"

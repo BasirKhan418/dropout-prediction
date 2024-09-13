@@ -13,7 +13,7 @@ const Chat = ({ aiopen, setaiopen }) => {
   const [loading, setLoading] = useState(false);
   const [chat, setChat] = useState([
     {
-      name: "RADSAB-AI",
+      name: "DropGuard AI",
       type: "bot",
       message:
         "Hello! I'm an AI assistant created by RadSab. How can I help you today?",
@@ -56,7 +56,7 @@ const Chat = ({ aiopen, setaiopen }) => {
         const updatedChat = [
           ...chat,
           { name: "You", type: "user", message: usermessage },
-          { name: "RadSab AI", type: "bot", message: result.response.text() },
+          { name: "DropGuard AI", type: "bot", message: result.response.text() },
         ];
 
         setChat(updatedChat);
@@ -109,10 +109,10 @@ const Chat = ({ aiopen, setaiopen }) => {
           <div className="flex flex-col h-full w-full bg-background">
             <header className="flex items-center gap-4 px-6 py-4 border-b bg-card">
               <Avatar className="w-10 h-10 border">
-                <AvatarFallback>NXT</AvatarFallback>
+                <AvatarFallback>DRG</AvatarFallback>
               </Avatar>
               <div>
-                <div className="font-medium">RADSAB-AI</div>
+                <div className="font-medium">DROPGUARD-AI</div>
                 <div className="text-sm text-muted-foreground">AI Assistant</div>
               </div>
             </header>
